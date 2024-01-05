@@ -1,0 +1,44 @@
+mssql:
+  server: "KRR-TST-PAHWL02"
+  user_id: "EUROPE\\aadzenzura"
+  password: "h)#X2Ubu04Qm4"
+  database: "KRR-PA-ACS"
+
+ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
+get_acsuser: "SELECT * FROM [auth].[Users] WHERE DomainName = ?"
+update_acsuser: "UPDATE [auth].[Users] SET LastAuth = ? WHERE Id = ?"
+get_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
+                  FROM [auth].Users au
+                  JOIN [auth].UsersRoles aur ON au.Id = aur.UserId
+                  JOIN [auth].Roles rol ON aur.RoleId = rol.Id
+                  JOIN [auth].RolePermission rolperm ON rol.Id = rolperm.RoleId
+                  JOIN [auth].Operations op ON rolperm.OperationId = op.Id
+                  WHERE 
+                      LOWER(TRIM(au.DomainName)) = ? 
+                      AND op.ServiceId = ? 
+                      AND (au.Disable = 0 AND (au.IsDeleted = 0 OR au.IsDeleted IS NULL))
+                      AND (aur.IsDeleted = 0 OR aur.IsDeleted IS NULL) 
+                      AND (rol.IsDeleted = 0 OR rol.IsDeleted IS NULL) 
+                      AND (rolperm.IsDeleted = 0 OR rolperm.IsDeleted IS NULL) 
+                      AND (op.IsDeleted = 0 OR op.IsDeleted IS NULL) 
+                      AND op.Name IS NOT NULL
+                      AND Permission = 1
+                  GROUP BY op.Name"
+get_guest_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
+                        FROM [auth].Users au
+                        JOIN [auth].UsersRoles aur ON au.Id = aur.UserId
+                        JOIN [auth].Roles rol ON aur.RoleId = rol.Id
+                        JOIN [auth].RolePermission rolperm ON rol.Id = rolperm.RoleId
+                        JOIN [auth].Operations op ON rolperm.OperationId = op.Id
+                        WHERE 
+                            LOWER(TRIM(au.DomainName)) = ?
+                            AND op.ServiceId = ?
+                            AND (au.Disable = 0 AND (au.IsDeleted = 0 OR au.IsDeleted IS NULL))
+                            AND (aur.IsDeleted = 0 OR aur.IsDeleted IS NULL)
+                            AND (rol.IsDeleted = 0 OR rol.IsDeleted IS NULL)
+                            AND (rolperm.IsDeleted = 0 OR rolperm.IsDeleted IS NULL)
+                            AND (op.IsDeleted = 0 OR op.IsDeleted IS NULL)
+                            AND op.Name IS NOT NULL
+                            AND Permission = 1
+                        GROUP BY op.Name"
+service_id: 17

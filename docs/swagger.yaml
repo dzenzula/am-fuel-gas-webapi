@@ -1,0 +1,82 @@
+definitions:
+  models.AuthUserData:
+    properties:
+      authStatus:
+        type: integer
+      displayName:
+        type: string
+      domain:
+        type: string
+      name:
+        type: string
+      permission:
+        items:
+          $ref: '#/definitions/models.MyPermission'
+        type: array
+      type:
+        type: string
+    type: object
+  models.MyPermission:
+    properties:
+      name:
+        type: string
+      permission:
+        type: integer
+    type: object
+  models.UserData:
+    properties:
+      domain:
+        type: string
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/Authorization/GetCurrentUserInfo:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthUserData'
+      tags:
+      - Authorization
+  /api/Authorization/LogInAuthorization:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: userdata
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthUserData'
+      tags:
+      - Authorization
+  /api/Authorization/LogOutAuthorization:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      tags:
+      - Authorization
+swagger: "2.0"
