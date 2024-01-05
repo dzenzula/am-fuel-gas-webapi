@@ -30,7 +30,7 @@ var (
 )
 
 func initConfig() Config {
-	configFiles := []string{"configuration/config.yml", "configs/kpi-steelmaking-calculations.conf.yml", "kpi-steelmaking-calculations.conf.yml"}
+	configFiles := []string{"configuration/config.yml", "am-fuel-gas-webapi.conf.conf.yml"}
 	var configName string
 	var config Config
 
