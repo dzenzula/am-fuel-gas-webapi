@@ -1,7 +1,7 @@
 mssql:
   server: "KRR-TST-PAHWL02"
-  user_id: "EUROPE\\aadzenzura"
-  password: "h)#X2Ubu04Qm4"
+  user_id: "EUROPE\\%LOGIN%"
+  password: "%PASSWORD%"
   database: "KRR-PA-ACS"
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
