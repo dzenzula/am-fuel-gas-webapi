@@ -86,6 +86,56 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/GetParameters": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parameters"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetManualFuelGas"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/SetParameters": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parameters"
+                ],
+                "parameters": [
+                    {
+                        "description": "Данные газ",
+                        "name": "userdata",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SetManualFuelGas"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -115,6 +165,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.GetManualFuelGas": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastUpdateDate": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
         "models.MyPermission": {
             "type": "object",
             "properties": {
@@ -123,6 +193,17 @@ const docTemplate = `{
                 },
                 "permission": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.SetManualFuelGas": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "number"
                 }
             }
         },

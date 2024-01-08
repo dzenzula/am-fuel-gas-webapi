@@ -16,12 +16,32 @@ definitions:
       type:
         type: string
     type: object
+  models.GetManualFuelGas:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      lastUpdateDate:
+        type: string
+      name:
+        type: string
+      value:
+        type: number
+    type: object
   models.MyPermission:
     properties:
       name:
         type: string
       permission:
         type: integer
+    type: object
+  models.SetManualFuelGas:
+    properties:
+      id:
+        type: integer
+      value:
+        type: number
     type: object
   models.UserData:
     properties:
@@ -79,4 +99,35 @@ paths:
           description: OK
       tags:
       - Authorization
+  /api/GetParameters:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetManualFuelGas'
+      tags:
+      - Parameters
+  /api/SetParameters:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные газ
+        in: body
+        name: userdata
+        required: true
+        schema:
+          $ref: '#/definitions/models.SetManualFuelGas'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      tags:
+      - Parameters
 swagger: "2.0"

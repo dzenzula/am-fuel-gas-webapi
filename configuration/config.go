@@ -15,7 +15,8 @@ type Config struct {
 	GetPermissions      string      `yaml:"get_permissions"`
 	GetGuestPermissions string      `yaml:"get_guest_permissions"`
 	ServiceId           *int        `yaml:"service_id"`
-	Port                string      `yaml:"port"`
+	ServerAddress       string      `yaml:"server_address"`
+	GinMode             string      `yaml:"gin_mode"`
 }
 
 type ConStringMS struct {
