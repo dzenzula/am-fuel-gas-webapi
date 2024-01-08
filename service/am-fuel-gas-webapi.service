@@ -1,0 +1,14 @@
+[Unit]
+Description = am-fuel-gas-webapi daemon
+After = network.target
+
+[Service]
+Type = simple
+WorkingDirectory = /home/services/am-fuel-gas-webapi
+ExecStart = /home/services/am-fuel-gas-webapi/am-fuel-gas-webapi
+Restart = always
+RestartSec = 30
+TimeoutStopSec = 5
+
+[Install]
+WantedBy = multi-user.target
