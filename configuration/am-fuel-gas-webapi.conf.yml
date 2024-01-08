@@ -5,6 +5,9 @@ mssql:
   database: "KRR-PA-ACS"
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
+port: ":8080"
+service_id: 17
+
 get_acsuser: "SELECT * FROM [auth].[Users] WHERE DomainName = ?"
 update_acsuser: "UPDATE [auth].[Users] SET LastAuth = ? WHERE Id = ?"
 get_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
@@ -41,4 +44,3 @@ get_guest_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permi
                             AND op.Name IS NOT NULL
                             AND Permission = 1
                         GROUP BY op.Name"
-service_id: 17
