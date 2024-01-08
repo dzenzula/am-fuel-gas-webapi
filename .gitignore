@@ -1,3 +1,7 @@
-configuration/config.yml
-*.exe
+configurations/*.yaml
 .vscode
+*.exe
+am-fuel-gas-webapi
+deploy/*
+/*.yml
+*.sdb*
