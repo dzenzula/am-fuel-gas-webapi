@@ -65,9 +65,9 @@ func startGin() {
 	})
 	r.Use(sessions.Sessions("mysession", store))
 
-	r.GET(c.GlobalConfig.UrlPrefix + "/swagger/*any", ginSwagger.WrapHandler(files.Handler))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
-	apiGroup := r.Group(c.GlobalConfig.UrlPrefix + "/api")
+	apiGroup := r.Group("/api")
 	{
 		apiGroup.GET("/GetParameters", controller.GetParameters)
 		apiGroup.POST("/SetPatameters", controller.SetParameters)
