@@ -21,9 +21,10 @@ server_address: "127.0.0.1:5010"
 gin_mode: release
 service_id: 17
 
-get_acsuser: "SELECT * FROM [auth].[Users] WHERE DomainName = ?"
-update_acsuser: "UPDATE [auth].[Users] SET LastAuth = ? WHERE Id = ?"
-get_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
+querries:
+  get_acsuser: "SELECT * FROM [auth].[Users] WHERE DomainName = ?"
+  update_acsuser: "UPDATE [auth].[Users] SET LastAuth = ? WHERE Id = ?"
+  get_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
                   FROM [auth].Users au
                   JOIN [auth].UsersRoles aur ON au.Id = aur.UserId
                   JOIN [auth].Roles rol ON aur.RoleId = rol.Id
@@ -40,7 +41,7 @@ get_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
                       AND op.Name IS NOT NULL
                       AND Permission = 1
                   GROUP BY op.Name"
-get_guest_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
+  get_guest_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
                         FROM [auth].Users au
                         JOIN [auth].UsersRoles aur ON au.Id = aur.UserId
                         JOIN [auth].Roles rol ON aur.RoleId = rol.Id
@@ -57,4 +58,5 @@ get_guest_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permi
                             AND op.Name IS NOT NULL
                             AND Permission = 1
                         GROUP BY op.Name"
+  insert_parametrs: "INSERT INTO \"raw-data\".data(id_measuring, \"timestamp\", value, quality, batch_id) VALUES (?, ?, ?, ?, ?)"
 
