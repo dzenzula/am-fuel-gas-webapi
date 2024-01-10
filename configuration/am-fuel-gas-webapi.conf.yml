@@ -17,9 +17,9 @@ permissions:
   show: "show_parameters"
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
-server_address: "localhost:8080"
+server_address: "127.0.0.1:5010"
+gin_mode: release
 service_id: 17
-gin_mode: "debug" #"release"
 
 get_acsuser: "SELECT * FROM [auth].[Users] WHERE DomainName = ?"
 update_acsuser: "UPDATE [auth].[Users] SET LastAuth = ? WHERE Id = ?"
@@ -57,3 +57,4 @@ get_guest_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permi
                             AND op.Name IS NOT NULL
                             AND Permission = 1
                         GROUP BY op.Name"
+
