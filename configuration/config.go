@@ -1,22 +1,31 @@
 package configuration
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	ConStringMsDb       ConStringMS `yaml:"mssql"`
-	AdAddress           string      `yaml:"ad_address"`
-	GetACSUser          string      `yaml:"get_acsuser"`
-	UpdateACSUser       string      `yaml:"update_acsuser"`
-	GetPermissions      string      `yaml:"get_permissions"`
-	GetGuestPermissions string      `yaml:"get_guest_permissions"`
-	ServiceId           *int        `yaml:"service_id"`
-	ServerAddress       string      `yaml:"server_address"`
-	GinMode             string      `yaml:"gin_mode"`
+	ConStringMsDb ConStringMS `yaml:"mssql"`
+	ConStringPgDb ConStringPG `yaml:"pg"`
+	Permissions   Permissions `yaml:"permissions"`
+	AdAddress     string      `yaml:"ad_address"`
+	Querries      Querries    `yaml:"querries"`
+	ServiceId     *int        `yaml:"service_id"`
+	ServerAddress string      `yaml:"server_address"`
+	GinMode       string      `yaml:"gin_mode"`
+}
+
+type Querries struct {
+	GetACSUser          string `yaml:"get_acsuser"`
+	UpdateACSUser       string `yaml:"update_acsuser"`
+	GetPermissions      string `yaml:"get_permissions"`
+	GetGuestPermissions string `yaml:"get_guest_permissions"`
+	InsertParametrs     string `yaml:"insert_parametrs"`
 }
 
 type ConStringMS struct {
@@ -26,12 +35,31 @@ type ConStringMS struct {
 	Database string `yaml:"database"`
 }
 
+type ConStringPG struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	DBName   string `yaml:"dbname"`
+	SSLMode  string `yaml:"sslmode"`
+}
+
+type Permissions struct {
+	Edit string `yaml:"edit"`
+	Show string `yaml:"show"`
+}
+
 var (
 	GlobalConfig Config = initConfig()
 )
 
 func initConfig() Config {
-	configFiles := []string{"configuration/config.yml", "am-fuel-gas-webapi.conf.yml"}
+	executable, err := os.Executable()
+	if err != nil {
+		log.Fatalf(fmt.Sprintf("Unable to get executable path: %s", err))
+	}
+	configPath := filepath.Join(filepath.Dir(executable), "am-fuel-gas-webapi.conf.yml")
+	configFiles := []string{"configuration/config.yml", configPath}
 	var configName string
 	var config Config
 

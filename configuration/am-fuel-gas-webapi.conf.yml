@@ -4,9 +4,22 @@ mssql:
   password: "%PASSWORD%"
   database: "KRR-PA-ACS"
 
+pg:
+  host: KRR-SQL-PSGRE00
+  port: 5432
+  user: "EUROPE\\%LOGIN%"
+  password: "%PASSWORD%"
+  dbname: krr-pa-analytics-data
+  sslmode: disable
+
+permissions:
+  edit: "edit_parameters"
+  show: "show_parameters"
+
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
-port: ":8080"
+server_address: "localhost:8080"
 service_id: 17
+gin_mode: "debug" #"release"
 
 get_acsuser: "SELECT * FROM [auth].[Users] WHERE DomainName = ?"
 update_acsuser: "UPDATE [auth].[Users] SET LastAuth = ? WHERE Id = ?"
