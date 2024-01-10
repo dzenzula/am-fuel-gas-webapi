@@ -2,19 +2,46 @@ package auth
 
 import (
 	"crypto/tls"
-	"fmt"
 	c "main/configuration"
+	"main/database"
+	"main/models"
+	"net/http"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/go-ldap/ldap"
 )
 
-var login string
+type PermissionInfo int
+
+const (
+	NotAuthorized PermissionInfo = 2
+	NoCredentials PermissionInfo = 3
+	Ok            PermissionInfo = 1
+	Error         PermissionInfo = -1
+)
+
+var (
+	login       string
+	permissions []models.MyPermission
+	isAuth      bool = false
+)
 
 func Init(s *gin.Context) {
 	session := sessions.Default(s)
-	login = session.Get("USER_DOMAIN_NAME").(string)
+
+	if userDomainName, ok := session.Get("USER_DOMAIN_NAME").(string); ok {
+		domain := session.Get("USER_DOMAIN").(string)
+		login = userDomainName
+		loginDomain := domain + "\\" + login
+		mssql, _ := database.ConnectToMSDataBase()
+		permissions = mssql.GetMyPermissions(loginDomain)
+		isAuth = true
+	} else {
+		s.JSON(http.StatusBadRequest, "You are not authorized")
+		return
+	}
 }
 
 func AuthenticateActiveDirectory(username, password, domain string) (bool, error) {
@@ -33,6 +60,30 @@ func AuthenticateActiveDirectory(username, password, domain string) (bool, error
 	return true, nil
 }
 
-func CheckPermission() {
-	fmt.Println(login)
+func CheckAnyPermission(perms []string) PermissionInfo {
+	if !isAuth {
+		return NotAuthorized
+	}
+
+	if len(perms) == 0 {
+		return NoCredentials
+	}
+
+	for _, p := range perms {
+		p = strings.ToLower(strings.TrimSpace(p))
+		if hasValidPermission(p) {
+			return Ok
+		}
+	}
+
+	return NoCredentials
+}
+
+func hasValidPermission(p string) bool {
+	for _, perm := range permissions {
+		if perm.Name == p && perm.Permission == 1 {
+			return true
+		}
+	}
+	return false
 }

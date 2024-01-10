@@ -63,7 +63,7 @@ func startGin() {
 		MaxAge: 3600,
 	})
 	r.Use(sessions.Sessions("mysession", store))
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
+	r.GET("amfuel-gas-webapi/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
 	work := r.Group("/api")
 	{

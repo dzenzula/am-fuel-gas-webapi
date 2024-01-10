@@ -13,4 +13,3 @@ type MyPermission struct {
 	Name       string
 	Permission int
 }
-

@@ -1,6 +1,15 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"main/auth"
+	conf "main/configuration"
+	"main/database"
+	"main/models"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 // GetParam
 // @Tags Parameters
@@ -9,6 +18,11 @@ import "github.com/gin-gonic/gin"
 // @Success 200 {object} models.GetManualFuelGas
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
+	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
+	checkPermissions := auth.CheckAnyPermission(permissions)
+	if checkPermissions != auth.Ok {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+	}
 
 }
 
@@ -20,5 +34,17 @@ func GetParameters(c *gin.Context) {
 // @Success 200
 // @Router /api/SetParameters [post]
 func SetParameters(c *gin.Context) {
+	var data models.SetManualFuelGas
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 
+	db, err := database.ConnectToPostgresDataBase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	db.InsertParametrs(data)
 }

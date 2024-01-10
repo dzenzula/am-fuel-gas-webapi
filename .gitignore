@@ -1,4 +1,4 @@
-configurations/*.yaml
+configuration/config.yml
 .vscode
 *.exe
 am-fuel-gas-webapi
