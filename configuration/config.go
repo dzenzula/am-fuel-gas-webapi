@@ -16,6 +16,7 @@ type Config struct {
 	GetGuestPermissions string      `yaml:"get_guest_permissions"`
 	ServiceId           *int        `yaml:"service_id"`
 	ServerAddress       string      `yaml:"server_address"`
+	UrlPrefix           string      `yaml:"url_prefix"`
 	GinMode             string      `yaml:"gin_mode"`
 }
 

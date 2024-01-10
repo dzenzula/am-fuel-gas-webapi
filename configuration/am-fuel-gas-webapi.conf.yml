@@ -6,6 +6,7 @@ mssql:
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
 server_address: "127.0.0.1:5010"
+url_prefix: "/am-fuel-gas-webapi"
 gin_mode: release
 service_id: 17
 
