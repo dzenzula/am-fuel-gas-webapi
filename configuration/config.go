@@ -17,6 +17,7 @@ type Config struct {
 	Querries      Querries    `yaml:"querries"`
 	ServiceId     *int        `yaml:"service_id"`
 	ServerAddress string      `yaml:"server_address"`
+	UrlPrefix     string      `yaml:"url_prefix"`
 	GinMode       string      `yaml:"gin_mode"`
 }
 

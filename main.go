@@ -50,6 +50,7 @@ func main() {
 	}
 }
 
+// @BasePath /am-fuel-gas-webapi
 func startGin() {
 	gin.SetMode(c.GlobalConfig.GinMode)
 	docs.SwaggerInfo.Title = "Swagger AmFuelGaz API"
@@ -63,20 +64,22 @@ func startGin() {
 		MaxAge: 3600,
 	})
 	r.Use(sessions.Sessions("mysession", store))
-	r.GET("amfuel-gas-webapi/swagger/*any", ginSwagger.WrapHandler(files.Handler))
+
+	r.GET(c.GlobalConfig.UrlPrefix + "/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
-	work := r.Group("/api")
+	apiGroup := r.Group(c.GlobalConfig.UrlPrefix + "/api")
 	{
-		work.GET("/GetParameters", controller.GetParameters)
-		work.POST("/SetPatameters", controller.SetParameters)
-	}
+		apiGroup.GET("/GetParameters", controller.GetParameters)
+		apiGroup.POST("/SetPatameters", controller.SetParameters)
 
-	auth := r.Group("/api/Authorization")
-	{
-		auth.GET("/GetCurrentUserInfo", controller.GetCurrentUserInfo)
-		auth.POST("/LogInAuthorization", controller.LogInAuthorization)
-		auth.POST("/LogOutAuthorization", controller.LogOutAuthorization)
+		auth := apiGroup.Group("/Authorization")
+		{
+			auth.GET("/GetCurrentUserInfo", controller.GetCurrentUserInfo)
+			auth.POST("/LogInAuthorization", controller.LogInAuthorization)
+			auth.POST("/LogOutAuthorization", controller.LogOutAuthorization)
+		}
 	}
 
 	r.Run(c.GlobalConfig.ServerAddress)
 }
+

@@ -3,6 +3,7 @@
     "info": {
         "contact": {}
     },
+    "basePath": "/am-fuel-gas-webapi",
     "paths": {
         "/api/Authorization/GetCurrentUserInfo": {
             "get": {

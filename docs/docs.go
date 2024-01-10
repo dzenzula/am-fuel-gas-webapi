@@ -228,7 +228,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/am-fuel-gas-webapi",
 	Schemes:          []string{},
 	Title:            "",
 	Description:      "",
