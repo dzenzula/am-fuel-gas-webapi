@@ -50,6 +50,7 @@ func main() {
 	}
 }
 
+// @BasePath /am-fuel-gas-webapi
 func startGin() {
 	gin.SetMode(c.GlobalConfig.GinMode)
 	docs.SwaggerInfo.Title = "Swagger AmFuelGaz API"
@@ -65,18 +66,19 @@ func startGin() {
 	r.Use(sessions.Sessions("mysession", store))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
-	work := r.Group("/api")
+	work := r.Group("/api/")
 	{
-		work.GET("/GetParameters", controller.GetParameters)
-		work.POST("/SetPatameters", controller.SetParameters)
+		work.GET("GetParameters", controller.GetParameters)
+		work.POST("SetPatameters", controller.SetParameters)
 	}
 
-	auth := r.Group("/api/Authorization")
+	auth := r.Group("api/Authorization/")
 	{
-		auth.GET("/GetCurrentUserInfo", controller.GetCurrentUserInfo)
-		auth.POST("/LogInAuthorization", controller.LogInAuthorization)
-		auth.POST("/LogOutAuthorization", controller.LogOutAuthorization)
+		auth.GET("GetCurrentUserInfo", controller.GetCurrentUserInfo)
+		auth.POST("LogInAuthorization", controller.LogInAuthorization)
+		auth.POST("LogOutAuthorization", controller.LogOutAuthorization)
 	}
 
 	r.Run(c.GlobalConfig.ServerAddress)
 }
+

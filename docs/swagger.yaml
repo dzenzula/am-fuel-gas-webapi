@@ -1,3 +1,4 @@
+basePath: /am-fuel-gas-webapi
 definitions:
   models.AuthUserData:
     properties:
