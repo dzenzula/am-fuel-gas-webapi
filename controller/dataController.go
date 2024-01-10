@@ -19,6 +19,7 @@ import (
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
 	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
+	auth.Init(c)
 	checkPermissions := auth.CheckAnyPermission(permissions)
 	if checkPermissions != auth.Ok {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
@@ -30,11 +31,17 @@ func GetParameters(c *gin.Context) {
 // @Tags Parameters
 // @Accept json
 // @Produce json
-// @Param userdata body models.SetManualFuelGas true "Данные газ"
+// @Param data body models.SetManualFuelGas true "Данные газ"
 // @Success 200
 // @Router /api/SetParameters [post]
 func SetParameters(c *gin.Context) {
 	var data models.SetManualFuelGas
+	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
+	auth.Init(c)
+	checkPermissions := auth.CheckAnyPermission(permissions)
+	if checkPermissions != auth.Ok {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+	}
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
