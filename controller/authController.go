@@ -18,11 +18,14 @@ import (
 // @Success 200 {object} models.AuthUserData
 // @Router /api/Authorization/GetCurrentUserInfo [get]
 func GetCurrentUserInfo(c *gin.Context) {
-	userDB, err := database.ConnectToDataBase()
+	userDB, err := database.ConnectToMSDataBase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+
+	auth.Init(c)
+	//auth.CheckPermission()
 
 	session := sessions.Default(c)
 	sessionID := session.Get("USER_IS_AUTH")
@@ -43,8 +46,7 @@ func GetCurrentUserInfo(c *gin.Context) {
 		return
 	}
 
-	user, err := userDB.FindUserByUsername(userDomain)
-	permissions := userDB.GetMyPermissions(&user)
+	permissions := userDB.GetMyPermissions(userDomain)
 	authUserData := userDataResponse(login, displayName, 1, "AUTH_USER", domain, permissions)
 
 	// Проверяем наличие необходимых данных
@@ -65,7 +67,7 @@ func GetCurrentUserInfo(c *gin.Context) {
 // @Router /api/Authorization/LogInAuthorization [post]
 func LogInAuthorization(c *gin.Context) {
 	var udata models.UserData
-	userDB, err := database.ConnectToDataBase()
+	userDB, err := database.ConnectToMSDataBase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -108,7 +110,7 @@ func LogInAuthorization(c *gin.Context) {
 			}
 		}
 
-		permissions := userDB.GetMyPermissions(&user)
+		permissions := userDB.GetMyPermissions(userDomainName)
 		authUserData := userDataResponse(*udata.Login, user.DisplayName, 1, "AUTH_USER", *udata.Domain, permissions)
 
 		c.JSON(http.StatusOK, authUserData)

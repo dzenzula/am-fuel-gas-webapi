@@ -64,7 +64,7 @@ func startGin() {
 		MaxAge: 3600,
 	})
 	r.Use(sessions.Sessions("mysession", store))
-
+
 	r.GET(c.GlobalConfig.UrlPrefix + "/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
 	apiGroup := r.Group(c.GlobalConfig.UrlPrefix + "/api")
