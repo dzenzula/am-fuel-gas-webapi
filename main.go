@@ -64,13 +64,13 @@ func startGin() {
 		MaxAge: 3600,
 	})
 	r.Use(sessions.Sessions("mysession", store))
-
-	r.GET(c.GlobalConfig.UrlPrefix + "/swagger/*any", ginSwagger.WrapHandler(files.Handler))
+
+	r.GET(c.GlobalConfig.UrlPrefix+"/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
 	apiGroup := r.Group(c.GlobalConfig.UrlPrefix + "/api")
 	{
 		apiGroup.GET("/GetParameters", controller.GetParameters)
-		apiGroup.POST("/SetPatameters", controller.SetParameters)
+		apiGroup.POST("/SetParameters", controller.SetParameters)
 
 		auth := apiGroup.Group("/Authorization")
 		{
@@ -82,4 +82,3 @@ func startGin() {
 
 	r.Run(c.GlobalConfig.ServerAddress)
 }
-
