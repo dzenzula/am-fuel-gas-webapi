@@ -1,14 +1,14 @@
 mssql:
   server: "KRR-TST-PAHWL02"
-  user_id: "EUROPE\\%LOGIN%"
-  password: "%PASSWORD%"
+  user_id: "EUROPE\\%MSSQL_LOGIN%"
+  password: "%MSSQL_PASSWORD%"
   database: "KRR-PA-ACS"
 
 pg:
   host: KRR-SQL-PSGRE00
   port: 5432
-  user: "EUROPE\\%LOGIN%"
-  password: "%PASSWORD%"
+  user: "EUROPE\\%PG_LOGIN%"
+  password: "%PG_PASSWORD%"
   dbname: krr-pa-analytics-data
   sslmode: disable
 
