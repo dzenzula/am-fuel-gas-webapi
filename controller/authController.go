@@ -24,9 +24,6 @@ func GetCurrentUserInfo(c *gin.Context) {
 		return
 	}
 
-	auth.Init(c)
-	//auth.CheckPermission()
-
 	session := sessions.Default(c)
 	sessionID := session.Get("USER_IS_AUTH")
 	if sessionID == nil {
@@ -55,6 +52,7 @@ func GetCurrentUserInfo(c *gin.Context) {
 		return
 	}
 
+	session.Save()
 	c.JSON(http.StatusOK, authUserData)
 }
 
@@ -66,6 +64,7 @@ func GetCurrentUserInfo(c *gin.Context) {
 // @Success 200 {object} models.AuthUserData
 // @Router /api/Authorization/LogInAuthorization [post]
 func LogInAuthorization(c *gin.Context) {
+	c.Writer.Header().Set("Dnt", "0")
 	var udata models.UserData
 	userDB, err := database.ConnectToMSDataBase()
 	if err != nil {
@@ -135,6 +134,7 @@ func LogOutAuthorization(c *gin.Context) {
 func setAuthUser(userName string, domainName string, userIsAuth int, userType string, userDomain string, c *gin.Context) bool {
 	session := sessions.Default(c)
 
+	//c.SetCookie("user", userName, 3600, "/", "", true, false)
 	session.Set("USER_NAME", userName)
 	session.Set("USER_DOMAIN_NAME", domainName)
 	session.Set("USER_IS_AUTH", userIsAuth)
@@ -156,4 +156,16 @@ func userDataResponse(userName string, userDisplayName string, userIsAuth int, u
 	}
 
 	return aud
+}
+
+func AuthRequired(c *gin.Context) {
+	session := sessions.Default(c)
+	user := session.Get("USER_IS_AUTH")
+	if user == nil {
+		// Abort the request with the appropriate error code
+		c.AbortWithStatusJSON(http.StatusUnauthorized, "You are not authorized")
+		return
+	}
+	// Continue down the chain to handler etc
+	c.Next()
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	c "main/configuration"
 	"main/models"
+	"strconv"
 	"time"
 
 	"fmt"
@@ -105,8 +106,7 @@ func (dbc *DBConnection) GetMyPermissions(domainName string) []models.MyPermissi
 	return myPermissions
 }
 
-func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas)  {
+func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) {
 	timeNow := time.Now().Format("2006-01-02 15:04:05.999")
-	dbc.db.Exec(c.GlobalConfig.Querries.InsertParametrs, d.Id, timeNow, d.Value, 192, nil)
+	dbc.db.Exec(c.GlobalConfig.Querries.InsertParametrs, strconv.Itoa(d.Id), timeNow, fmt.Sprintf("%f", d.Value), strconv.Itoa(192), nil)
 }
-

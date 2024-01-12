@@ -61,25 +61,28 @@ func startGin() {
 
 	store := cookie.NewStore([]byte("secret"))
 	store.Options(sessions.Options{
+		Path: "/am-fuel-gas-webapi/api",
+		HttpOnly: false,
 		MaxAge: 3600,
 	})
 	r.Use(sessions.Sessions("mysession", store))
-
+
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
-	apiGroup := r.Group("/api")
+	authGroup := r.Group("/am-fuel-gas-webapi/api/Authorization")
 	{
-		apiGroup.GET("/GetParameters", controller.GetParameters)
-		apiGroup.POST("/SetPatameters", controller.SetParameters)
+		authGroup.GET("/GetCurrentUserInfo", controller.GetCurrentUserInfo)
+		authGroup.POST("/LogInAuthorization", controller.LogInAuthorization)
+		authGroup.POST("/LogOutAuthorization", controller.LogOutAuthorization)
+	}
 
-		auth := apiGroup.Group("/Authorization")
-		{
-			auth.GET("/GetCurrentUserInfo", controller.GetCurrentUserInfo)
-			auth.POST("/LogInAuthorization", controller.LogInAuthorization)
-			auth.POST("/LogOutAuthorization", controller.LogOutAuthorization)
-		}
+	apiGroup := r.Group("/am-fuel-gas-webapi/api/")
+	apiGroup.Use(controller.AuthRequired)
+	{
+		//auth.POST("/SetParameters", controller.SetParameters)
+		apiGroup.GET("/GetParameters", controller.GetParameters)
+		apiGroup.POST("/SetParameters", controller.SetParameters)
 	}
 
 	r.Run(c.GlobalConfig.ServerAddress)
 }
-

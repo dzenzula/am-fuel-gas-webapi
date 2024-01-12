@@ -19,6 +19,7 @@ import (
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
 	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
+	auth.Init(c)
 	checkPermissions := auth.CheckAnyPermission(permissions)
 	if checkPermissions != auth.Ok {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
@@ -35,6 +36,14 @@ func GetParameters(c *gin.Context) {
 // @Router /api/SetParameters [post]
 func SetParameters(c *gin.Context) {
 	var data models.SetManualFuelGas
+	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
+
+	auth.Init(c)
+	checkPermissions := auth.CheckAnyPermission(permissions)
+	if checkPermissions != auth.Ok {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+		return
+	}
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -47,4 +56,5 @@ func SetParameters(c *gin.Context) {
 	}
 
 	db.InsertParametrs(data)
+	c.JSON(http.StatusOK, "Insert successful")
 }
