@@ -110,3 +110,13 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) {
 	timeNow := time.Now().Format("2006-01-02 15:04:05.999")
 	dbc.db.Exec(c.GlobalConfig.Querries.InsertParametrs, strconv.Itoa(d.Id), timeNow, fmt.Sprintf("%f", d.Value), strconv.Itoa(192), nil)
 }
+
+func (dbc *DBConnection) GetData() []models.GetManualFuelGas {
+	var gas []models.GetManualFuelGas
+	var ids []int
+	dbc.db.Raw(c.GlobalConfig.Querries.GetMeasuringsIds).Scan(&ids)
+
+	dbc.db.Raw(c.GlobalConfig.Querries.GetData, ids).Scan(&gas)
+
+	return gas
+}

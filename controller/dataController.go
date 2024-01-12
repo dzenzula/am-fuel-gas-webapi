@@ -20,11 +20,21 @@ import (
 func GetParameters(c *gin.Context) {
 	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
 	auth.Init(c)
+
 	checkPermissions := auth.CheckAnyPermission(permissions)
 	if checkPermissions != auth.Ok {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+		return
 	}
 
+	db, err := database.ConnectToPostgresDataBase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	gas := db.GetData()
+	c.JSON(http.StatusOK, gas)
 }
 
 // SetParam

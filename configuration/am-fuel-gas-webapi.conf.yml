@@ -59,4 +59,7 @@ querries:
                             AND Permission = 1
                         GROUP BY op.Name"
   insert_parametrs: "INSERT INTO \"raw-data\".data(id_measuring, \"timestamp\", value, quality, batch_id) VALUES (?, ?, ?, ?, ?)"
+  get_measuringids: "SELECT  * FROM \"raw-data\".get_id_measuring_by_tags('AmFuelGas', 'NatGas', 'manual')"
+  get_data: "SELECT d.id_measuring, ms.name, ms.description, d.value, d.\"timestamp\" FROM \"raw-data\".data AS d
+            JOIN \"raw-data\".measurings AS ms ON ms.id = d.id_measuring WHERE d.id_measuring IN ?"
 

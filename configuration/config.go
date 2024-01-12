@@ -26,6 +26,8 @@ type Querries struct {
 	GetPermissions      string `yaml:"get_permissions"`
 	GetGuestPermissions string `yaml:"get_guest_permissions"`
 	InsertParametrs     string `yaml:"insert_parametrs"`
+	GetMeasuringsIds    string `yaml:"get_measuringids"`
+	GetData             string `yaml:"get_data"`
 }
 
 type ConStringMS struct {
