@@ -7,7 +7,7 @@ mssql:
 pg:
   host: KRR-SQL-PSGRE00
   port: 5432
-  user: "EUROPE\\%PG_LOGIN%"
+  user: "%PG_LOGIN%"
   password: "%PG_PASSWORD%"
   dbname: krr-pa-analytics-data
   sslmode: disable
