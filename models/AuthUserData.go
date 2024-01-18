@@ -10,6 +10,6 @@ type AuthUserData struct {
 }
 
 type MyPermission struct {
-	Name       string
-	Permission int
+	Name       string `json:"name"`
+	Permission int    `json:"permission"`
 }
