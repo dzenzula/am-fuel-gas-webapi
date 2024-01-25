@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -65,6 +66,7 @@ func startGin() {
 		Path:     "/am-fuel-gas-webapi/api",
 		HttpOnly: true,
 		MaxAge:   3600,
+		SameSite: http.SameSiteNoneMode,
 	})
 	r.Use(sessions.Sessions("mysession", store))
 
@@ -80,7 +82,6 @@ func startGin() {
 	apiGroup := r.Group("/api")
 	apiGroup.Use(authorization.AuthRequired)
 	{
-		//auth.POST("/SetParameters", controller.SetParameters)
 		apiGroup.GET("/GetParameters", controller.GetParameters)
 		apiGroup.POST("/SetParameters", controller.SetParameters)
 	}
