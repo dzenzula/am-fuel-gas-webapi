@@ -16,7 +16,7 @@ gin_mode: release
 ## Настройки для апи авторизации
 mssql:
   server: "KRR-TST-PAHWL02"
-  user_id: "EUROPE\\%MSSQL_LOGIN%"
+  user: "EUROPE\\%MSSQL_LOGIN%"
   password: "%MSSQL_PASSWORD%"
   database: "KRR-PA-ACS"
 

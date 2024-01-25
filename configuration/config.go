@@ -16,13 +16,6 @@ type Config struct {
 	GinMode       string      `yaml:"gin_mode"`
 }
 
-type ConStringMS struct {
-	Server   string `yaml:"server"`
-	UserID   string `yaml:"user_id"`
-	Password string `yaml:"password"`
-	Database string `yaml:"database"`
-}
-
 type ConStringPG struct {
 	Host     string `yaml:"host"`
 	Port     int    `yaml:"port"`
