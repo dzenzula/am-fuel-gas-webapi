@@ -63,7 +63,7 @@ func startGin() {
 	store := cookie.NewStore([]byte("secret"))
 	store.Options(sessions.Options{
 		Path:     "/am-fuel-gas-webapi/api",
-		HttpOnly: false,
+		HttpOnly: true,
 		MaxAge:   3600,
 	})
 	r.Use(sessions.Sessions("mysession", store))
