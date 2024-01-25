@@ -70,14 +70,14 @@ func startGin() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
-	authGroup := r.Group("/am-fuel-gas-webapi/api/Authorization")
+	authGroup := r.Group("/api/Authorization")
 	{
 		authGroup.GET("/GetCurrentUserInfo", authorization.GetCurrentUserInfo)
 		authGroup.POST("/LogInAuthorization", authorization.LogInAuthorization)
 		authGroup.POST("/LogOutAuthorization", authorization.LogOutAuthorization)
 	}
 
-	apiGroup := r.Group("/am-fuel-gas-webapi/api")
+	apiGroup := r.Group("/api")
 	apiGroup.Use(authorization.AuthRequired)
 	{
 		//auth.POST("/SetParameters", controller.SetParameters)
