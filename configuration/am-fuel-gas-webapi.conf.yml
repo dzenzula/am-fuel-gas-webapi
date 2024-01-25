@@ -1,9 +1,3 @@
-mssql:
-  server: "KRR-TST-PAHWL02"
-  user_id: "EUROPE\\%MSSQL_LOGIN%"
-  password: "%MSSQL_PASSWORD%"
-  database: "KRR-PA-ACS"
-
 pg:
   host: KRR-SQL-PSGRE00
   port: 5432
@@ -16,50 +10,15 @@ permissions:
   edit: "edit_parameters"
   show: "show_parameters"
 
-ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
 server_address: "127.0.0.1:5010"
 gin_mode: release
+
+## Настройки для апи авторизации
+mssql:
+  server: "KRR-TST-PAHWL02"
+  user_id: "EUROPE\\%MSSQL_LOGIN%"
+  password: "%MSSQL_PASSWORD%"
+  database: "KRR-PA-ACS"
+
+ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
 service_id: 17
-
-querries:
-  get_acsuser: "SELECT * FROM [auth].[Users] WHERE DomainName = ?"
-  update_acsuser: "UPDATE [auth].[Users] SET LastAuth = ? WHERE Id = ?"
-  get_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
-                  FROM [auth].Users au
-                  JOIN [auth].UsersRoles aur ON au.Id = aur.UserId
-                  JOIN [auth].Roles rol ON aur.RoleId = rol.Id
-                  JOIN [auth].RolePermission rolperm ON rol.Id = rolperm.RoleId
-                  JOIN [auth].Operations op ON rolperm.OperationId = op.Id
-                  WHERE 
-                      LOWER(TRIM(au.DomainName)) = ? 
-                      AND op.ServiceId = ? 
-                      AND (au.Disable = 0 AND (au.IsDeleted = 0 OR au.IsDeleted IS NULL))
-                      AND (aur.IsDeleted = 0 OR aur.IsDeleted IS NULL) 
-                      AND (rol.IsDeleted = 0 OR rol.IsDeleted IS NULL) 
-                      AND (rolperm.IsDeleted = 0 OR rolperm.IsDeleted IS NULL) 
-                      AND (op.IsDeleted = 0 OR op.IsDeleted IS NULL) 
-                      AND op.Name IS NOT NULL
-                      AND Permission = 1
-                  GROUP BY op.Name"
-  get_guest_permissions: "SELECT op.Name as Name, MIN(rolperm.Permission) as Permission
-                        FROM [auth].Users au
-                        JOIN [auth].UsersRoles aur ON au.Id = aur.UserId
-                        JOIN [auth].Roles rol ON aur.RoleId = rol.Id
-                        JOIN [auth].RolePermission rolperm ON rol.Id = rolperm.RoleId
-                        JOIN [auth].Operations op ON rolperm.OperationId = op.Id
-                        WHERE 
-                            LOWER(TRIM(au.DomainName)) = ?
-                            AND op.ServiceId = ?
-                            AND (au.Disable = 0 AND (au.IsDeleted = 0 OR au.IsDeleted IS NULL))
-                            AND (aur.IsDeleted = 0 OR aur.IsDeleted IS NULL)
-                            AND (rol.IsDeleted = 0 OR rol.IsDeleted IS NULL)
-                            AND (rolperm.IsDeleted = 0 OR rolperm.IsDeleted IS NULL)
-                            AND (op.IsDeleted = 0 OR op.IsDeleted IS NULL)
-                            AND op.Name IS NOT NULL
-                            AND Permission = 1
-                        GROUP BY op.Name"
-  insert_parametrs: "INSERT INTO \"raw-data\".data(id_measuring, \"timestamp\", value, quality, batch_id) VALUES (?, ?, ?, ?, ?)"
-  get_measuringids: "SELECT  * FROM \"raw-data\".get_id_measuring_by_tags('AmFuelGas', 'NatGas', 'manual')"
-  get_data: "SELECT d.id_measuring, ms.name, ms.description, d.value, d.\"timestamp\" FROM \"raw-data\".data AS d
-            JOIN \"raw-data\".measurings AS ms ON ms.id = d.id_measuring WHERE d.id_measuring IN ?"
-

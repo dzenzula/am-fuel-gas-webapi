@@ -2,13 +2,13 @@ package controller
 
 import (
 	"fmt"
-	"main/auth"
 	conf "main/configuration"
 	"main/database"
 	"main/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization"
 )
 
 // GetParam
@@ -19,10 +19,10 @@ import (
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
 	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
-	auth.Init(c)
+	authorization.Init(c)
 
-	checkPermissions := auth.CheckAnyPermission(permissions)
-	if checkPermissions != auth.Ok {
+	checkPermissions := authorization.CheckAnyPermission(permissions)
+	if checkPermissions != authorization.Ok {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
 		return
 	}
@@ -48,9 +48,9 @@ func SetParameters(c *gin.Context) {
 	var data models.SetManualFuelGas
 	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
 
-	auth.Init(c)
-	checkPermissions := auth.CheckAnyPermission(permissions)
-	if checkPermissions != auth.Ok {
+	authorization.Init(c)
+	checkPermissions := authorization.CheckAnyPermission(permissions)
+	if checkPermissions != authorization.Ok {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
 		return
 	}

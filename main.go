@@ -9,6 +9,7 @@ import (
 	"github.com/kardianos/service"
 	files "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization"
 
 	c "main/configuration"
 	"main/controller"
@@ -69,15 +70,15 @@ func startGin() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
-	authGroup := r.Group("/api/Authorization")
+	authGroup := r.Group("/am-fuel-gas-webapi/api/Authorization")
 	{
-		authGroup.GET("/GetCurrentUserInfo", controller.GetCurrentUserInfo)
-		authGroup.POST("/LogInAuthorization", controller.LogInAuthorization)
-		authGroup.POST("/LogOutAuthorization", controller.LogOutAuthorization)
+		authGroup.GET("/GetCurrentUserInfo", authorization.GetCurrentUserInfo)
+		authGroup.POST("/LogInAuthorization", authorization.LogInAuthorization)
+		authGroup.POST("/LogOutAuthorization", authorization.LogOutAuthorization)
 	}
 
-	apiGroup := r.Group("/api")
-	apiGroup.Use(controller.AuthRequired)
+	apiGroup := r.Group("/am-fuel-gas-webapi/api")
+	apiGroup.Use(authorization.AuthRequired)
 	{
 		//auth.POST("/SetParameters", controller.SetParameters)
 		apiGroup.GET("/GetParameters", controller.GetParameters)

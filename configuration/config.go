@@ -10,24 +10,10 @@ import (
 )
 
 type Config struct {
-	ConStringMsDb ConStringMS `yaml:"mssql"`
 	ConStringPgDb ConStringPG `yaml:"pg"`
 	Permissions   Permissions `yaml:"permissions"`
-	AdAddress     string      `yaml:"ad_address"`
-	Querries      Querries    `yaml:"querries"`
-	ServiceId     *int        `yaml:"service_id"`
 	ServerAddress string      `yaml:"server_address"`
 	GinMode       string      `yaml:"gin_mode"`
-}
-
-type Querries struct {
-	GetACSUser          string `yaml:"get_acsuser"`
-	UpdateACSUser       string `yaml:"update_acsuser"`
-	GetPermissions      string `yaml:"get_permissions"`
-	GetGuestPermissions string `yaml:"get_guest_permissions"`
-	InsertParametrs     string `yaml:"insert_parametrs"`
-	GetMeasuringsIds    string `yaml:"get_measuringids"`
-	GetData             string `yaml:"get_data"`
 }
 
 type ConStringMS struct {
