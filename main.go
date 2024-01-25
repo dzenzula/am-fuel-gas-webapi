@@ -67,6 +67,7 @@ func startGin() {
 		HttpOnly: true,
 		MaxAge:   3600,
 		SameSite: http.SameSiteNoneMode,
+		Secure: true,
 	})
 	r.Use(sessions.Sessions("mysession", store))
 
