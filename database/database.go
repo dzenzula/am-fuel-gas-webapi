@@ -55,3 +55,8 @@ func (dbc *DBConnection) GetData() []models.GetManualFuelGas {
 
 	return gas
 }
+
+func (dbc *DBConnection) Close() {
+	sqldb, _ := dbc.db.DB()
+	sqldb.Close()
+}

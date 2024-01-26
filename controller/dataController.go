@@ -15,9 +15,11 @@ import (
 // @Tags Parameters
 // @Accept json
 // @Produce json
+// @Param date query string true "Дата получения параметров"
 // @Success 200 {object} models.GetManualFuelGas
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
+	//date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
 	authorization.Init(c)
 
@@ -34,6 +36,7 @@ func GetParameters(c *gin.Context) {
 	}
 
 	gas := db.GetData()
+	db.Close()
 	c.JSON(http.StatusOK, gas)
 }
 
@@ -66,5 +69,6 @@ func SetParameters(c *gin.Context) {
 	}
 
 	db.InsertParametrs(data)
+	db.Close()
 	c.JSON(http.StatusOK, "Insert successful")
 }
