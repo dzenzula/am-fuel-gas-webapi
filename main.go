@@ -67,20 +67,20 @@ func startGin() {
 		HttpOnly: true,
 		MaxAge:   3600,
 		SameSite: http.SameSiteNoneMode,
-		Secure: true,
+		Secure:   true,
 	})
 	r.Use(sessions.Sessions("mysession", store))
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
-	authGroup := r.Group("/am-fuel-gas-webapi/api/Authorization")
+	authGroup := r.Group("/api/Authorization")
 	{
 		authGroup.GET("/GetCurrentUserInfo", authorization.GetCurrentUserInfo)
 		authGroup.POST("/LogInAuthorization", authorization.LogInAuthorization)
 		authGroup.POST("/LogOutAuthorization", authorization.LogOutAuthorization)
 	}
 
-	apiGroup := r.Group("/am-fuel-gas-webapi/api")
+	apiGroup := r.Group("/api")
 	apiGroup.Use(authorization.AuthRequired)
 	{
 		apiGroup.GET("/GetParameters", controller.GetParameters)
