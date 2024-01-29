@@ -36,22 +36,36 @@ func ConnectToPostgresDataBase() (*DBConnection, error) {
 
 func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) {
 	timeNow := time.Now().Format("2006-01-02 15:04:05.999")
+	var queryInsert string
 
-	queryInsert := "INSERT INTO \"raw-data\".data(id_measuring, \"timestamp\", value, quality, batch_id) VALUES (?, ?, ?, ?, ?)"
+	if d.Tag == "day" {
+		queryInsert = "INSERT INTO \"analytics-time-group\".data_day(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+	} else if d.Tag == "month" {
+		queryInsert = "INSERT INTO \"analytics-time-group\".data_month(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+	} else if d.Tag == "year" {
+		queryInsert = "INSERT INTO \"analytics-time-group\".data_year(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+	}
+	
 
-	dbc.db.Exec(queryInsert, strconv.Itoa(d.Id), timeNow, fmt.Sprintf("%f", d.Value), strconv.Itoa(192), nil)
+	dbc.db.Exec(queryInsert, strconv.Itoa(d.Id), timeNow, fmt.Sprintf("%f", d.Value), nil, strconv.Itoa(192))
 }
 
-func (dbc *DBConnection) GetData() []models.GetManualFuelGas {
+func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 	var gas []models.GetManualFuelGas
-	var ids []int
+	var temp []models.GetManualFuelGas
+	var periods = []string{"day", "month", "year"}
+	dateStart := date.Format("2006-01-02 15:04:05")
+	dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
-	queryGetIds := "SELECT  * FROM \"raw-data\".get_id_measuring_by_tags('AmFuelGas', 'NatGas', 'manual')"
-	queryGetData := `SELECT d.id_measuring, ms.name, ms.description, d.value, d.\"timestamp\" FROM \"raw-data\".data AS d
-					JOIN \"raw-data\".measurings AS ms ON ms.id = d.id_measuring WHERE d.id_measuring IN ?`
-	
-	dbc.db.Raw(queryGetIds).Scan(&ids)
-	dbc.db.Raw(queryGetData, ids).Scan(&gas)
+	for _, p := range periods {
+		queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag(?, ?, ?)"
+		dbc.db.Raw(queryGetData, dateStart, dateEnd, p).Scan(&temp)
+		for _, t := range temp {
+			ct := t
+			ct.Tag = p
+			gas = append(gas, ct)
+		}
+	}
 
 	return gas
 }

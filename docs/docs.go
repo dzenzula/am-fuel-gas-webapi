@@ -98,6 +98,15 @@ const docTemplate = `{
                 "tags": [
                     "Parameters"
                 ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -180,6 +189,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "tag": {
+                    "type": "string"
+                },
                 "value": {
                     "type": "number"
                 }
@@ -201,6 +213,9 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "integer"
+                },
+                "tag": {
+                    "type": "string"
                 },
                 "value": {
                     "type": "number"

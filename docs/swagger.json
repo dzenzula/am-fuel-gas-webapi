@@ -87,6 +87,15 @@
                 "tags": [
                     "Parameters"
                 ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -169,6 +178,9 @@
                 "name": {
                     "type": "string"
                 },
+                "tag": {
+                    "type": "string"
+                },
                 "value": {
                     "type": "number"
                 }
@@ -190,6 +202,9 @@
             "properties": {
                 "id": {
                     "type": "integer"
+                },
+                "tag": {
+                    "type": "string"
                 },
                 "value": {
                     "type": "number"

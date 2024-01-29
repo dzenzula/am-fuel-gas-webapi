@@ -6,6 +6,7 @@ import (
 	"main/database"
 	"main/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization"
@@ -19,7 +20,14 @@ import (
 // @Success 200 {object} models.GetManualFuelGas
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
-	//date := c.Query("date")
+	date := c.Query("date")
+	
+	isValid, truncatedTime := isValidDate(date)
+	if !isValid {
+		c.JSON(http.StatusBadRequest, "Дата не корректна.")
+		return
+	}
+
 	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
 	authorization.Init(c)
 
@@ -35,7 +43,7 @@ func GetParameters(c *gin.Context) {
 		return
 	}
 
-	gas := db.GetData()
+	gas := db.GetData(truncatedTime)
 	db.Close()
 	c.JSON(http.StatusOK, gas)
 }
@@ -71,4 +79,15 @@ func SetParameters(c *gin.Context) {
 	db.InsertParametrs(data)
 	db.Close()
 	c.JSON(http.StatusOK, "Insert successful")
+}
+
+func isValidDate(dateString string) (bool, time.Time) {
+	layout := "2006-01-02"
+	parsedTime, err := time.Parse(layout, dateString)
+	if err != nil {
+		return false, time.Time{}
+	}
+
+	// Возвращаем дату с временем 00:00:00
+	return true, parsedTime.Truncate(24 * time.Hour)
 }
