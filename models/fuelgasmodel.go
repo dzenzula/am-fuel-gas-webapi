@@ -15,5 +15,5 @@ type SetManualFuelGas struct {
 	Id    int
 	Value float64
 	Tag   string
-	Date  time.Time
+	Date  string
 }

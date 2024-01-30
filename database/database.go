@@ -8,6 +8,7 @@ import (
 
 	"fmt"
 
+	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -34,19 +35,36 @@ func ConnectToPostgresDataBase() (*DBConnection, error) {
 	return &DBConnection{db}, nil
 }
 
-func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) {
-	timestamp := d.Date.Format("2006-01-02 15:04:05.999")
+func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 	var queryInsert string
-
-	if d.Tag == "day" {
-		queryInsert = "INSERT INTO \"analytics-time-group\".data_day(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
-	} else if d.Tag == "month" {
-		queryInsert = "INSERT INTO \"analytics-time-group\".data_month(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
-	} else if d.Tag == "year" {
-		queryInsert = "INSERT INTO \"analytics-time-group\".data_year(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+	var guid string
+	parsedDate, errTime := time.Parse("2006-01-02", d.Date)
+	if errTime != nil {
+		return errTime
 	}
 
-	dbc.db.Exec(queryInsert, strconv.Itoa(d.Id), timestamp, fmt.Sprintf("%f", d.Value), nil, strconv.Itoa(192))
+	guid, errGuid := generateGUID()
+	if errGuid != nil {
+		return errGuid
+	}
+
+	switch d.Tag {
+	case "day":
+		queryInsert = "INSERT INTO \"analytics-time-group\".data_day(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+	case "month":
+		queryInsert = "INSERT INTO \"analytics-time-group\".data_month(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+		parsedDate = time.Date(parsedDate.Year(), parsedDate.Month(), 1, 0, 0, 0, 0, parsedDate.Location())
+	case "year":
+		queryInsert = "INSERT INTO \"analytics-time-group\".data_year(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+		parsedDate = time.Date(parsedDate.Year(), time.January, 1, 0, 0, 0, 0, parsedDate.Location())
+	}
+
+	timestamp := parsedDate.Format("2006-01-02 15:04:05.999")
+	res := dbc.db.Exec(queryInsert, strconv.Itoa(d.Id), timestamp, fmt.Sprintf("%f", d.Value), guid, strconv.Itoa(192))
+	if res.Error != nil {
+		return res.Error
+	}
+	return nil
 }
 
 func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
@@ -73,4 +91,17 @@ func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 func (dbc *DBConnection) Close() {
 	sqldb, _ := dbc.db.DB()
 	sqldb.Close()
+}
+
+func generateGUID() (string, error) {
+	// Generate a new random UUID
+	newUUID, err := uuid.NewRandom()
+	if err != nil {
+		return "", err
+	}
+
+	// Format the UUID as a string in the specified format
+	formattedUUID := fmt.Sprintf("%s", newUUID)
+
+	return formattedUUID, nil
 }

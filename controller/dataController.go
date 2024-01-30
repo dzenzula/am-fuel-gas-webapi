@@ -76,7 +76,10 @@ func SetParameters(c *gin.Context) {
 		return
 	}
 
-	db.InsertParametrs(data)
+	if err := db.InsertParametrs(data); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	db.Close()
 	c.JSON(http.StatusOK, "Insert successful")
 }
