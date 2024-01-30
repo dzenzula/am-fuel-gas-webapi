@@ -35,7 +35,7 @@ func ConnectToPostgresDataBase() (*DBConnection, error) {
 }
 
 func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) {
-	timeNow := time.Now().Format("2006-01-02 15:04:05.999")
+	timestamp := d.Date.Format("2006-01-02 15:04:05.999")
 	var queryInsert string
 
 	if d.Tag == "day" {
@@ -45,9 +45,8 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) {
 	} else if d.Tag == "year" {
 		queryInsert = "INSERT INTO \"analytics-time-group\".data_year(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 	}
-	
 
-	dbc.db.Exec(queryInsert, strconv.Itoa(d.Id), timeNow, fmt.Sprintf("%f", d.Value), nil, strconv.Itoa(192))
+	dbc.db.Exec(queryInsert, strconv.Itoa(d.Id), timestamp, fmt.Sprintf("%f", d.Value), nil, strconv.Itoa(192))
 }
 
 func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
@@ -65,6 +64,7 @@ func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 			ct.Tag = p
 			gas = append(gas, ct)
 		}
+		temp = []models.GetManualFuelGas{}
 	}
 
 	return gas

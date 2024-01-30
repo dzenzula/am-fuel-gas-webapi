@@ -211,6 +211,9 @@ const docTemplate = `{
         "models.SetManualFuelGas": {
             "type": "object",
             "properties": {
+                "date": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
