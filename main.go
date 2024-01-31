@@ -65,7 +65,6 @@ func startGin() {
 	store.Options(sessions.Options{
 		Path:     "/am-fuel-gas-webapi/api",
 		HttpOnly: true,
-		MaxAge:   3600,
 		SameSite: http.SameSiteNoneMode,
 		Secure:   true,
 	})
