@@ -29,6 +29,12 @@ definitions:
         type: string
       tag:
         type: string
+      timestamp:
+        type: string
+      updateHistory:
+        items:
+          $ref: '#/definitions/models.UpdateHistory'
+        type: array
       value:
         type: number
     type: object
@@ -49,6 +55,13 @@ definitions:
         type: string
       value:
         type: number
+    type: object
+  models.UpdateHistory:
+    properties:
+      TimestampInsert:
+        type: string
+      Value:
+        type: string
     type: object
   models.UserData:
     properties:

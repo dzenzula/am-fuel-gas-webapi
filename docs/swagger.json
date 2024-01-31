@@ -181,6 +181,15 @@
                 "tag": {
                     "type": "string"
                 },
+                "timestamp": {
+                    "type": "string"
+                },
+                "updateHistory": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UpdateHistory"
+                    }
+                },
                 "value": {
                     "type": "number"
                 }
@@ -211,6 +220,17 @@
                 },
                 "value": {
                     "type": "number"
+                }
+            }
+        },
+        "models.UpdateHistory": {
+            "type": "object",
+            "properties": {
+                "TimestampInsert": {
+                    "type": "string"
+                },
+                "Value": {
+                    "type": "string"
                 }
             }
         },

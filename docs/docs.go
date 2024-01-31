@@ -192,6 +192,15 @@ const docTemplate = `{
                 "tag": {
                     "type": "string"
                 },
+                "timestamp": {
+                    "type": "string"
+                },
+                "updateHistory": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UpdateHistory"
+                    }
+                },
                 "value": {
                     "type": "number"
                 }
@@ -222,6 +231,17 @@ const docTemplate = `{
                 },
                 "value": {
                     "type": "number"
+                }
+            }
+        },
+        "models.UpdateHistory": {
+            "type": "object",
+            "properties": {
+                "TimestampInsert": {
+                    "type": "string"
+                },
+                "Value": {
+                    "type": "string"
                 }
             }
         },

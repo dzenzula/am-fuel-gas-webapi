@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	c "main/configuration"
 	"main/models"
 	"strconv"
@@ -68,21 +69,27 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 }
 
 func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
+	var tmp []models.GetManualFuelGas
 	var gas []models.GetManualFuelGas
-	var temp []models.GetManualFuelGas
-	var periods = []string{"day", "month", "year"}
 	dateStart := date.Format("2006-01-02 15:04:05")
-	dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
+	//dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
-	for _, p := range periods {
-		queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag(?, ?, ?)"
-		dbc.db.Raw(queryGetData, dateStart, dateEnd, p).Scan(&temp)
-		for _, t := range temp {
-			ct := t
-			ct.Tag = p
-			gas = append(gas, ct)
+	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag_test(?)"
+	dbc.db.Raw(queryGetData, dateStart).Scan(&tmp)
+
+	for _, t := range tmp {
+		var updateHistory []models.UpdateHistory
+		err := json.Unmarshal([]byte(*t.UpdateHistoryJSON), &updateHistory)
+		if err != nil {
+			fmt.Println(err.Error())
+			return nil
 		}
-		temp = []models.GetManualFuelGas{}
+		g := t
+		if updateHistory[len(updateHistory)-1].Value != nil {
+			g.UpdateHistory = updateHistory
+		}
+		gas = append(gas, g)
+
 	}
 
 	return gas
