@@ -16,7 +16,7 @@ type GetManualFuelGas struct {
 
 type UpdateHistory struct {
 	TimestampInsert time.Time `json:"TimestampInsert"`
-	Value           *string   `json:"Value"`
+	Value           *float64  `json:"Value,string"`
 }
 
 type SetManualFuelGas struct {
