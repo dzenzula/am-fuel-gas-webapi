@@ -145,7 +145,7 @@ paths:
       parameters:
       - description: Данные газ
         in: body
-        name: userdata
+        name: data
         required: true
         schema:
           $ref: '#/definitions/models.SetManualFuelGas'

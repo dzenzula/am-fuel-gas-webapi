@@ -52,7 +52,7 @@ func GetParameters(c *gin.Context) {
 // @Tags Parameters
 // @Accept json
 // @Produce json
-// @Param userdata body models.SetManualFuelGas true "Данные газ"
+// @Param data body models.SetManualFuelGas true "Данные газ"
 // @Success 200
 // @Router /api/SetParameters [post]
 func SetParameters(c *gin.Context) {
