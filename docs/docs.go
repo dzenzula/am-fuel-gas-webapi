@@ -98,6 +98,15 @@ const docTemplate = `{
                 "tags": [
                     "Parameters"
                 ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -180,6 +189,18 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "tag": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "updateHistory": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UpdateHistory"
+                    }
+                },
                 "value": {
                     "type": "number"
                 }
@@ -199,11 +220,28 @@ const docTemplate = `{
         "models.SetManualFuelGas": {
             "type": "object",
             "properties": {
+                "date": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
+                "tag": {
+                    "type": "string"
+                },
                 "value": {
                     "type": "number"
+                }
+            }
+        },
+        "models.UpdateHistory": {
+            "type": "object",
+            "properties": {
+                "TimestampInsert": {
+                    "type": "string"
+                },
+                "Value": {
+                    "type": "string"
                 }
             }
         },

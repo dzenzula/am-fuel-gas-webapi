@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/swaggo/gin-swagger v1.6.0
 	gorm.io/gorm v1.25.5
+	krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization v0.0.0
 )
 
 require (
@@ -63,4 +64,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/driver/sqlserver v1.5.2
+)
+
+replace (
+	krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization => ./src/authorization
 )

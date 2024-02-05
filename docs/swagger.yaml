@@ -27,6 +27,14 @@ definitions:
         type: string
       name:
         type: string
+      tag:
+        type: string
+      timestamp:
+        type: string
+      updateHistory:
+        items:
+          $ref: '#/definitions/models.UpdateHistory'
+        type: array
       value:
         type: number
     type: object
@@ -39,10 +47,21 @@ definitions:
     type: object
   models.SetManualFuelGas:
     properties:
+      date:
+        type: string
       id:
         type: integer
+      tag:
+        type: string
       value:
         type: number
+    type: object
+  models.UpdateHistory:
+    properties:
+      TimestampInsert:
+        type: string
+      Value:
+        type: string
     type: object
   models.UserData:
     properties:
@@ -104,6 +123,12 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: Дата получения параметров
+        in: query
+        name: date
+        required: true
+        type: string
       produces:
       - application/json
       responses:
