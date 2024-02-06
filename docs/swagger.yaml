@@ -17,6 +17,16 @@ definitions:
       type:
         type: string
     type: object
+  models.GetDensityCoefficient:
+    properties:
+      DensityCoefficient:
+        example: "0"
+        type: string
+      syncHistory:
+        items:
+          $ref: '#/definitions/models.SyncHistory'
+        type: array
+    type: object
   models.GetManualFuelGas:
     properties:
       description:
@@ -56,11 +66,27 @@ definitions:
       value:
         type: number
     type: object
+  models.SyncHistory:
+    properties:
+      Value:
+        example: "0"
+        type: string
+      endDate:
+        type: string
+      startDate:
+        type: string
+      syncMode:
+        description: '"автоматический" || "ручной"'
+        type: string
+      userName:
+        type: string
+    type: object
   models.UpdateHistory:
     properties:
       TimestampInsert:
         type: string
       Value:
+        example: "0"
         type: string
     type: object
   models.UserData:
@@ -119,6 +145,25 @@ paths:
           description: OK
       tags:
       - Authorization
+  /api/GetDensityCoefficientDetails:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Дата получения параметров
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetDensityCoefficient'
+      tags:
+      - Parameters
   /api/GetParameters:
     get:
       consumes:

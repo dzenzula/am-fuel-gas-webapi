@@ -21,14 +21,14 @@ import (
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
 	date := c.Query("date")
-	
+
 	isValid, truncatedTime := isValidDate(date)
 	if !isValid {
 		c.JSON(http.StatusBadRequest, "Дата не корректна.")
 		return
 	}
 
-	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
+	permissions := []string{conf.GlobalConfig.Permissions.Show}
 	authorization.Init(c)
 
 	checkPermissions := authorization.CheckAnyPermission(permissions)
@@ -57,7 +57,7 @@ func GetParameters(c *gin.Context) {
 // @Router /api/SetParameters [post]
 func SetParameters(c *gin.Context) {
 	var data models.SetManualFuelGas
-	permissions := []string{conf.GlobalConfig.Permissions.Show, conf.GlobalConfig.Permissions.Edit}
+	permissions := []string{conf.GlobalConfig.Permissions.Edit}
 
 	authorization.Init(c)
 	checkPermissions := authorization.CheckAnyPermission(permissions)
@@ -82,6 +82,42 @@ func SetParameters(c *gin.Context) {
 	}
 	db.Close()
 	c.JSON(http.StatusOK, "Insert successful")
+}
+
+// GetDensityCoefficientParam
+// @Tags Parameters
+// @Accept json
+// @Produce json
+// @Param date query string true "Дата получения параметров"
+// @Success 200 {object} models.GetDensityCoefficient
+// @Router /api/GetDensityCoefficientDetails [get]
+func GetDensityCoefficientDetails(c *gin.Context) {
+	var data models.GetDensityCoefficient
+	date := c.Query("date")
+	permissions := []string{conf.GlobalConfig.Permissions.Show}
+
+	isValid, _ := isValidDate(date)
+	if !isValid {
+		c.JSON(http.StatusBadRequest, "Дата не корректна.")
+		return
+	}
+
+	authorization.Init(c)
+	checkPermissions := authorization.CheckAnyPermission(permissions)
+	if checkPermissions != authorization.Ok {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+		return
+	}
+
+	db, err := database.ConnectToPostgresDataBase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data = db.GetDensityCoefficientData(date)
+	db.Close()
+	c.JSON(http.StatusOK, data)
 }
 
 func isValidDate(dateString string) (bool, time.Time) {

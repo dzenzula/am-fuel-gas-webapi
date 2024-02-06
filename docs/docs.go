@@ -87,6 +87,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/GetDensityCoefficientDetails": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parameters"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetDensityCoefficient"
+                        }
+                    }
+                }
+            }
+        },
         "/api/GetParameters": {
             "get": {
                 "consumes": [
@@ -174,6 +204,21 @@ const docTemplate = `{
                 }
             }
         },
+        "models.GetDensityCoefficient": {
+            "type": "object",
+            "properties": {
+                "DensityCoefficient": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "syncHistory": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SyncHistory"
+                    }
+                }
+            }
+        },
         "models.GetManualFuelGas": {
             "type": "object",
             "properties": {
@@ -234,6 +279,28 @@ const docTemplate = `{
                 }
             }
         },
+        "models.SyncHistory": {
+            "type": "object",
+            "properties": {
+                "Value": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "syncMode": {
+                    "description": "\"автоматический\" || \"ручной\"",
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
         "models.UpdateHistory": {
             "type": "object",
             "properties": {
@@ -241,7 +308,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Value": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "0"
                 }
             }
         },

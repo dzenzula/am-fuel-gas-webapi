@@ -95,6 +95,19 @@ func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 	return gas
 }
 
+func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensityCoefficient {
+	var res models.GetDensityCoefficient
+	var history []models.SyncHistory
+
+	queryGetDensityCoefficient := "SELECT * FROM \"analytics-time-group\".get_density_coefficient(?)"
+	dbc.db.Raw(queryGetDensityCoefficient, date).Scan(&history)
+
+	res.DensityCoefficient = history[0].Value
+	res.SyncHistory = history
+
+	return res
+}
+
 func (dbc *DBConnection) Close() {
 	sqldb, _ := dbc.db.DB()
 	sqldb.Close()
