@@ -161,7 +161,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Данные газ",
-                        "name": "userdata",
+                        "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
