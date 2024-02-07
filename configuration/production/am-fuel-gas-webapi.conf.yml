@@ -1,0 +1,24 @@
+pg:
+  host: KRR-SQL-PSGRE00
+  port: 5432
+  user: "%PG_LOGIN%"
+  password: "%PG_PASSWORD%"
+  dbname: krr-pa-analytics-data
+  sslmode: disable
+
+permissions:
+  edit: "edit_parameters"
+  show: "show_parameters"
+
+server_address: "127.0.0.1:5010"
+gin_mode: release
+
+## Настройки для апи авторизации
+mssql:
+  server: "KRR-SQL-PACLX02"
+  user: "EUROPE\\%MSSQL_LOGIN%"
+  password: "%MSSQL_PASSWORD%"
+  database: "KRR-PA-ACS"
+
+ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
+service_id: 17
