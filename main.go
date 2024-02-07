@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -9,6 +10,7 @@ import (
 	"github.com/kardianos/service"
 	files "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization"
 
 	c "main/configuration"
 	"main/controller"
@@ -61,24 +63,27 @@ func startGin() {
 
 	store := cookie.NewStore([]byte("secret"))
 	store.Options(sessions.Options{
-		MaxAge: 3600,
+		Path:     "/am-fuel-gas-webapi/api",
+		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
 	})
 	r.Use(sessions.Sessions("mysession", store))
 
-
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 
+	authGroup := r.Group("/api/Authorization")
+	{
+		authGroup.GET("/GetCurrentUserInfo", authorization.GetCurrentUserInfo)
+		authGroup.POST("/LogInAuthorization", authorization.LogInAuthorization)
+		authGroup.POST("/LogOutAuthorization", authorization.LogOutAuthorization)
+	}
+
 	apiGroup := r.Group("/api")
+	apiGroup.Use(authorization.AuthRequired)
 	{
 		apiGroup.GET("/GetParameters", controller.GetParameters)
 		apiGroup.POST("/SetParameters", controller.SetParameters)
-
-		auth := apiGroup.Group("/Authorization")
-		{
-			auth.GET("/GetCurrentUserInfo", controller.GetCurrentUserInfo)
-			auth.POST("/LogInAuthorization", controller.LogInAuthorization)
-			auth.POST("/LogOutAuthorization", controller.LogOutAuthorization)
-		}
 	}
 
 	r.Run(c.GlobalConfig.ServerAddress)

@@ -1,36 +1,21 @@
 package database
 
 import (
-	"errors"
+	"encoding/json"
 	c "main/configuration"
 	"main/models"
+	"strconv"
 	"time"
 
 	"fmt"
 
+	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )
 
 type DBConnection struct {
 	db *gorm.DB
-}
-
-func ConnectToMSDataBase() (*DBConnection, error) {
-	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;database=%s;schema=auth",
-		c.GlobalConfig.ConStringMsDb.Server,
-		c.GlobalConfig.ConStringMsDb.UserID,
-		c.GlobalConfig.ConStringMsDb.Password,
-		c.GlobalConfig.ConStringMsDb.Database,
-	)
-
-	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-
-	return &DBConnection{db}, nil
 }
 
 func ConnectToPostgresDataBase() (*DBConnection, error) {
@@ -51,62 +36,79 @@ func ConnectToPostgresDataBase() (*DBConnection, error) {
 	return &DBConnection{db}, nil
 }
 
-/*func InitDBConnections() (*DBConnection, error) {
-	msDB, err := ConnectToMSDataBase()
-	if err != nil {
-		return nil, err
+func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
+	var queryInsert string
+	var guid string
+	parsedDate, errTime := time.Parse("2006-01-02", d.Date)
+	if errTime != nil {
+		return errTime
 	}
 
-	pgDB, err := ConnectToPostgresDataBase()
-	if err != nil {
-		return nil, err
+	guid, errGuid := generateGUID()
+	if errGuid != nil {
+		return errGuid
 	}
 
-	return &DBConnection{
-		MSSQL:    msDB,
-		Postgres: pgDB,
-	}, nil
-}*/
-
-func (dbc *DBConnection) FindUserByUsername(username string) (models.User, error) {
-	var user models.User
-
-	//result := dbc.db.Where("DomainName = ?", username).First(&user)
-	result := dbc.db.Raw(c.GlobalConfig.Querries.GetACSUser, username).First(&user)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return user, fmt.Errorf("user not found: %w", result.Error)
-		}
-		return user, result.Error
+	switch d.Tag {
+	case "day":
+		queryInsert = "INSERT INTO \"analytics-time-group\".data_day(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+	case "month":
+		queryInsert = "INSERT INTO \"analytics-time-group\".data_month(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+		parsedDate = time.Date(parsedDate.Year(), parsedDate.Month(), 1, 0, 0, 0, 0, parsedDate.Location())
+	case "year":
+		queryInsert = "INSERT INTO \"analytics-time-group\".data_year(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+		parsedDate = time.Date(parsedDate.Year(), time.January, 1, 0, 0, 0, 0, parsedDate.Location())
 	}
 
-	return user, nil
-}
-
-func (dbc *DBConnection) UpdateUser(user *models.User) error {
-	timeNow := time.Now().Format("2006-01-02 15:04:05.9999999")
-	result := dbc.db.Exec(c.GlobalConfig.Querries.UpdateACSUser, timeNow, user.Id)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("user not found: %w", result.Error)
-		}
-		return result.Error
+	timestamp := parsedDate.Format("2006-01-02 15:04:05.999")
+	res := dbc.db.Exec(queryInsert, strconv.Itoa(d.Id), timestamp, fmt.Sprintf("%f", d.Value), guid, strconv.Itoa(192))
+	if res.Error != nil {
+		return res.Error
 	}
-
 	return nil
 }
 
-func (dbc *DBConnection) GetMyPermissions(domainName string) []models.MyPermission {
-	var myPermissions []models.MyPermission
+func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
+	var tmp []models.GetManualFuelGas
+	var gas []models.GetManualFuelGas
+	dateStart := date.Format("2006-01-02 15:04:05")
+	//dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
-	dbc.db.Raw(c.GlobalConfig.Querries.GetPermissions, domainName, c.GlobalConfig.ServiceId).
-		Scan(&myPermissions)
+	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag_test(?)"
+	dbc.db.Raw(queryGetData, dateStart).Scan(&tmp)
 
-	return myPermissions
+	for _, t := range tmp {
+		var updateHistory []models.UpdateHistory
+		err := json.Unmarshal([]byte(*t.UpdateHistoryJSON), &updateHistory)
+		if err != nil {
+			fmt.Println(err.Error())
+			return nil
+		}
+		g := t
+		if updateHistory[len(updateHistory)-1].Value != nil {
+			g.UpdateHistory = updateHistory
+		}
+		gas = append(gas, g)
+
+	}
+
+	return gas
 }
 
-func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas)  {
-	timeNow := time.Now().Format("2006-01-02 15:04:05.999")
-	dbc.db.Exec(c.GlobalConfig.Querries.InsertParametrs, d.Id, timeNow, d.Value, 192, nil)
+func (dbc *DBConnection) Close() {
+	sqldb, _ := dbc.db.DB()
+	sqldb.Close()
 }
 
+func generateGUID() (string, error) {
+	// Generate a new random UUID
+	newUUID, err := uuid.NewRandom()
+	if err != nil {
+		return "", err
+	}
+
+	// Format the UUID as a string in the specified format
+	formattedUUID := fmt.Sprintf("%s", newUUID)
+
+	return formattedUUID, nil
+}
