@@ -27,7 +27,7 @@ type SetManualFuelGas struct {
 }
 
 type GetDensityCoefficient struct {
-	DensityCoefficient *float64 `json:"DensityCoefficient,string"`
+	DensityCoefficient *float64 `gorm:"column:value"`
 	SyncHistory        []SyncHistory
 }
 
@@ -36,5 +36,5 @@ type SyncHistory struct {
 	EndDate   time.Time `gorm:"column:enddate"`
 	UserName  string    `gorm:"column:username"`
 	SyncMode  string    `gorm:"column:syncmode"`
-	Value     *float64  `json:"Value,string" gorm:"column:dcvalue"`
+	Value     *float64  `gorm:"column:dcvalue"`
 }
