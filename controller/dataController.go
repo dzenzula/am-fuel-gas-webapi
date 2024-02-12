@@ -152,6 +152,8 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 
 	username := authorization.ReturnDomainUser()
 	db.RecalculateDensityCoefficient(date, username)
+	db.Close()
+	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 
 func isValidDate(dateString string) (bool, time.Time) {
