@@ -9,6 +9,7 @@ pg:
 permissions:
   edit: "edit_parameters"
   show: "show_parameters"
+  calculate: "calculate_parameters"
 
 server_address: "127.0.0.1:5010"
 gin_mode: release
