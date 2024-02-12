@@ -97,7 +97,7 @@ func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 
 func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensityCoefficient {
 	var res models.GetDensityCoefficient
-	var history []models.SyncHistory
+	var history []models.CalculationHistory
 
 	queryGetDensityCoefficient := "SELECT * FROM \"analytics-time-group\".get_density_coefficient(?)"
 	dbc.db.Raw(queryGetDensityCoefficient, date).Scan(&history)
@@ -108,9 +108,15 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensit
 								ORDER BY id DESC
 								LIMIT 1`
 	dbc.db.Raw(queryGetLastCoefficient, date, date).Scan(&res.DensityCoefficient)
-	res.SyncHistory = history
+	res.CalculationHistory = history
 
 	return res
+}
+
+func (dbc *DBConnection) RecalculateDensityCoefficient(date string, username string) {
+	densityCoefId := 1707482375047
+	queryRecalculate := "CALL analytics-time-group.general_procedure(?, ?, ?)"
+	dbc.db.Raw(queryRecalculate, date, username, densityCoefId)
 }
 
 func (dbc *DBConnection) Close() {

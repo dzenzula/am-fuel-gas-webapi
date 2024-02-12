@@ -147,6 +147,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/RecalculateDensityCoefficient": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parameters"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/SetParameters": {
             "post": {
                 "consumes": [
@@ -204,18 +231,37 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CalculationHistory": {
+            "type": "object",
+            "properties": {
+                "endDate": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "syncMode": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
         "models.GetDensityCoefficient": {
             "type": "object",
             "properties": {
-                "DensityCoefficient": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "syncHistory": {
+                "calculationHistory": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SyncHistory"
+                        "$ref": "#/definitions/models.CalculationHistory"
                     }
+                },
+                "densityCoefficient": {
+                    "type": "number"
                 }
             }
         },
@@ -276,28 +322,6 @@ const docTemplate = `{
                 },
                 "value": {
                     "type": "number"
-                }
-            }
-        },
-        "models.SyncHistory": {
-            "type": "object",
-            "properties": {
-                "Value": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "endDate": {
-                    "type": "string"
-                },
-                "startDate": {
-                    "type": "string"
-                },
-                "syncMode": {
-                    "description": "\"автоматический\" || \"ручной\"",
-                    "type": "string"
-                },
-                "userName": {
-                    "type": "string"
                 }
             }
         },

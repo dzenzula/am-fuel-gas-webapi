@@ -17,15 +17,27 @@ definitions:
       type:
         type: string
     type: object
+  models.CalculationHistory:
+    properties:
+      endDate:
+        type: string
+      startDate:
+        type: string
+      syncMode:
+        type: string
+      userName:
+        type: string
+      value:
+        type: number
+    type: object
   models.GetDensityCoefficient:
     properties:
-      DensityCoefficient:
-        example: "0"
-        type: string
-      syncHistory:
+      calculationHistory:
         items:
-          $ref: '#/definitions/models.SyncHistory'
+          $ref: '#/definitions/models.CalculationHistory'
         type: array
+      densityCoefficient:
+        type: number
     type: object
   models.GetManualFuelGas:
     properties:
@@ -65,21 +77,6 @@ definitions:
         type: string
       value:
         type: number
-    type: object
-  models.SyncHistory:
-    properties:
-      Value:
-        example: "0"
-        type: string
-      endDate:
-        type: string
-      startDate:
-        type: string
-      syncMode:
-        description: '"автоматический" || "ручной"'
-        type: string
-      userName:
-        type: string
     type: object
   models.UpdateHistory:
     properties:
@@ -181,6 +178,23 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.GetManualFuelGas'
+      tags:
+      - Parameters
+  /api/RecalculateDensityCoefficient:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Дата получения параметров
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
       tags:
       - Parameters
   /api/SetParameters:
