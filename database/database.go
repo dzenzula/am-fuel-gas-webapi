@@ -37,7 +37,7 @@ func ConnectToPostgresDataBase() (*DBConnection, error) {
 }
 
 func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
-	var queryInsert string
+	var queryInsert string = "INSERT INTO \"analytics-time-group\".data(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 	var guid string
 	parsedDate, errTime := time.Parse("2006-01-02", d.Date)
 	if errTime != nil {
@@ -50,13 +50,9 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 	}
 
 	switch d.Tag {
-	case "day":
-		queryInsert = "INSERT INTO \"analytics-time-group\".data_day(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 	case "month":
-		queryInsert = "INSERT INTO \"analytics-time-group\".data_month(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 		parsedDate = time.Date(parsedDate.Year(), parsedDate.Month(), 1, 0, 0, 0, 0, parsedDate.Location())
 	case "year":
-		queryInsert = "INSERT INTO \"analytics-time-group\".data_year(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 		parsedDate = time.Date(parsedDate.Year(), time.January, 1, 0, 0, 0, 0, parsedDate.Location())
 	}
 
