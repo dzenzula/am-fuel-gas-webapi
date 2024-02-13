@@ -70,7 +70,7 @@ func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 	dateStart := date.Format("2006-01-02 15:04:05")
 	//dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
-	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag_test(?)"
+	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag(?)"
 	dbc.db.Raw(queryGetData, dateStart).Scan(&tmp)
 
 	for _, t := range tmp {
@@ -111,7 +111,7 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensit
 
 func (dbc *DBConnection) RecalculateDensityCoefficient(date string, username string) {
 	densityCoefId := 1707482375047
-	queryRecalculate := "CALL analytics-time-group.general_procedure(?, ?, ?)"
+	queryRecalculate := "CALL \"analytics-time-group\".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)"
 	dbc.db.Raw(queryRecalculate, date, username, densityCoefId)
 }
 
