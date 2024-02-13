@@ -87,6 +87,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/GetDensityCoefficientDetails": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parameters"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetDensityCoefficient"
+                        }
+                    }
+                }
+            }
+        },
         "/api/GetParameters": {
             "get": {
                 "consumes": [
@@ -113,6 +143,33 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.GetManualFuelGas"
                         }
+                    }
+                }
+            }
+        },
+        "/api/RecalculateDensityCoefficient": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parameters"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -171,6 +228,40 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "models.CalculationHistory": {
+            "type": "object",
+            "properties": {
+                "endDate": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "syncMode": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.GetDensityCoefficient": {
+            "type": "object",
+            "properties": {
+                "calculationHistory": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CalculationHistory"
+                    }
+                },
+                "densityCoefficient": {
+                    "type": "number"
                 }
             }
         },
@@ -241,7 +332,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Value": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "0"
                 }
             }
         },

@@ -37,7 +37,7 @@ func ConnectToPostgresDataBase() (*DBConnection, error) {
 }
 
 func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
-	var queryInsert string
+	var queryInsert string = "INSERT INTO \"analytics-time-group\".data(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 	var guid string
 	parsedDate, errTime := time.Parse("2006-01-02", d.Date)
 	if errTime != nil {
@@ -50,13 +50,9 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 	}
 
 	switch d.Tag {
-	case "day":
-		queryInsert = "INSERT INTO \"analytics-time-group\".data_day(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 	case "month":
-		queryInsert = "INSERT INTO \"analytics-time-group\".data_month(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 		parsedDate = time.Date(parsedDate.Year(), parsedDate.Month(), 1, 0, 0, 0, 0, parsedDate.Location())
 	case "year":
-		queryInsert = "INSERT INTO \"analytics-time-group\".data_year(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 		parsedDate = time.Date(parsedDate.Year(), time.January, 1, 0, 0, 0, 0, parsedDate.Location())
 	}
 
@@ -74,7 +70,7 @@ func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 	dateStart := date.Format("2006-01-02 15:04:05")
 	//dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
-	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag_test(?)"
+	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag(?)"
 	dbc.db.Raw(queryGetData, dateStart).Scan(&tmp)
 
 	for _, t := range tmp {
@@ -93,6 +89,30 @@ func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 	}
 
 	return gas
+}
+
+func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensityCoefficient {
+	var res models.GetDensityCoefficient
+	var history []models.CalculationHistory
+
+	queryGetDensityCoefficient := "SELECT * FROM \"analytics-time-group\".get_density_coefficient(?)"
+	dbc.db.Raw(queryGetDensityCoefficient, date).Scan(&history)
+
+	queryGetLastCoefficient := `SELECT value FROM "analytics-time-group".data_day 
+								WHERE id_measuring = 1703751302145 
+								AND "timestamp" >= ? AND "timestamp" < ?::date + INTERVAL '1 DAY'
+								ORDER BY id DESC
+								LIMIT 1`
+	dbc.db.Raw(queryGetLastCoefficient, date, date).Scan(&res.DensityCoefficient)
+	res.CalculationHistory = history
+
+	return res
+}
+
+func (dbc *DBConnection) RecalculateDensityCoefficient(date string, username string) {
+	densityCoefId := 1707482375047
+	queryRecalculate := "CALL \"analytics-time-group\".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)"
+	dbc.db.Raw(queryRecalculate, date, username, densityCoefId)
 }
 
 func (dbc *DBConnection) Close() {
