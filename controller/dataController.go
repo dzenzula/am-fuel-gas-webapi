@@ -85,7 +85,7 @@ func SetParameters(c *gin.Context) {
 }
 
 // GetDensityCoefficientParam
-// @Tags Parameters
+// @Tags Calculations
 // @Accept json
 // @Produce json
 // @Param date query string true "Дата получения параметров"
@@ -121,7 +121,7 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 }
 
 // RecalculateDensityCoefficient
-// @Tags Parameters
+// @Tags Calculations
 // @Accept json
 // @Produce json
 // @Param date query string true "Дата получения параметров"
@@ -154,6 +154,33 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 	db.RecalculateDensityCoefficient(date, username)
 	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
+}
+
+// GetCalculationsList
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.CalculationList
+// @Router /api/GetCalculationsList [get]
+func GetCalculationsList(c *gin.Context) {
+	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
+
+	authorization.Init(c)
+	checkPermissions := authorization.CheckAnyPermission(permissions)
+	if checkPermissions != authorization.Ok {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+		return
+	}
+
+	db, err := database.ConnectToPostgresDataBase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data := db.GetCalculationsList()
+	db.Close()
+	c.JSON(http.StatusOK, data)
 }
 
 func isValidDate(dateString string) (bool, time.Time) {
