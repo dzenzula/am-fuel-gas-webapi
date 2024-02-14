@@ -67,7 +67,7 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 	var tmp []models.GetManualFuelGas
 	var gas []models.GetManualFuelGas
-	dateStart := date.Format("2006-01-02 15:04:05")
+	dateStart := date.Format("2006-01-02")
 	//dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
 	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag(?)"
