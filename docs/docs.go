@@ -87,6 +87,27 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/GetCalculationsList": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculationList"
+                        }
+                    }
+                }
+            }
+        },
         "/api/GetDensityCoefficientDetails": {
             "get": {
                 "consumes": [
@@ -96,7 +117,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Parameters"
+                    "Calculations"
                 ],
                 "parameters": [
                     {
@@ -156,7 +177,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Parameters"
+                    "Calculations"
                 ],
                 "parameters": [
                     {
@@ -248,6 +269,20 @@ const docTemplate = `{
                 },
                 "value": {
                     "type": "number"
+                }
+            }
+        },
+        "models.CalculationList": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },

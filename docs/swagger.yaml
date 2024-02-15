@@ -30,6 +30,15 @@ definitions:
       value:
         type: number
     type: object
+  models.CalculationList:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   models.GetDensityCoefficient:
     properties:
       calculationHistory:
@@ -142,6 +151,19 @@ paths:
           description: OK
       tags:
       - Authorization
+  /api/GetCalculationsList:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CalculationList'
+      tags:
+      - Calculations
   /api/GetDensityCoefficientDetails:
     get:
       consumes:
@@ -160,7 +182,7 @@ paths:
           schema:
             $ref: '#/definitions/models.GetDensityCoefficient'
       tags:
-      - Parameters
+      - Calculations
   /api/GetParameters:
     get:
       consumes:
@@ -196,7 +218,7 @@ paths:
         "200":
           description: OK
       tags:
-      - Parameters
+      - Calculations
   /api/SetParameters:
     post:
       consumes:

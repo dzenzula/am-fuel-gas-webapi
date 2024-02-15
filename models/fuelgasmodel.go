@@ -38,3 +38,9 @@ type CalculationHistory struct {
 	SyncMode  string     `gorm:"column:syncmode"`
 	Value     *float64   `gorm:"column:dcvalue"`
 }
+
+type CalculationList struct {
+	Id          int
+	Name        string
+	Description string
+}

@@ -18,6 +18,13 @@ type DBConnection struct {
 	db *gorm.DB
 }
 
+type CalculationIds int
+
+const (
+	DensityCoefId int = 1707482375047
+	ImbalanceId   int = 1707482385203
+)
+
 func ConnectToPostgresDataBase() (*DBConnection, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
 		c.GlobalConfig.ConStringPgDb.Host,
@@ -37,7 +44,7 @@ func ConnectToPostgresDataBase() (*DBConnection, error) {
 }
 
 func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
-	var queryInsert string = "INSERT INTO \"analytics-time-group\".data(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+	var queryInsert string = "INSERT INTO \"raw-data\".data(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
 	var guid string
 	parsedDate, errTime := time.Parse("2006-01-02", d.Date)
 	if errTime != nil {
@@ -67,7 +74,7 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 	var tmp []models.GetManualFuelGas
 	var gas []models.GetManualFuelGas
-	dateStart := date.Format("2006-01-02 15:04:05")
+	dateStart := date.Format("2006-01-02")
 	//dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
 	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag(?)"
@@ -110,9 +117,17 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensit
 }
 
 func (dbc *DBConnection) RecalculateDensityCoefficient(date string, username string) {
-	densityCoefId := 1707482375047
 	queryRecalculate := "CALL \"analytics-time-group\".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)"
-	dbc.db.Raw(queryRecalculate, date, username, densityCoefId)
+	dbc.db.Raw(queryRecalculate, date, username, DensityCoefId)
+}
+
+func (dbc *DBConnection) GetCalculationsList() []models.CalculationList {
+	var res []models.CalculationList
+	arr := []int{DensityCoefId, ImbalanceId}
+	queryGetCalculationsList := "SELECT id, name, description FROM \"raw-data\".measurings WHERE id IN (?)"
+	dbc.db.Raw(queryGetCalculationsList, arr).Scan(&res)
+
+	return res
 }
 
 func (dbc *DBConnection) Close() {
