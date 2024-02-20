@@ -258,6 +258,9 @@ const docTemplate = `{
                 "endDate": {
                     "type": "string"
                 },
+                "error": {
+                    "type": "string"
+                },
                 "startDate": {
                     "type": "string"
                 },
