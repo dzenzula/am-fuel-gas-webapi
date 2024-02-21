@@ -105,7 +105,7 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensit
 	queryGetDensityCoefficient := "SELECT * FROM \"analytics-time-group\".get_density_coefficient(?)"
 	dbc.db.Raw(queryGetDensityCoefficient, date).Scan(&history)
 
-	queryGetLastCoefficient := `SELECT value FROM "analytics-time-group".data_day 
+	queryGetLastCoefficient := `SELECT value FROM "raw-data".data 
 								WHERE id_measuring = 1703751302145 
 								AND "timestamp" >= ? AND "timestamp" < ?::date + INTERVAL '1 DAY'
 								ORDER BY id DESC

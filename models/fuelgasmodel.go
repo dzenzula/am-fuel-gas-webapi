@@ -34,6 +34,7 @@ type GetDensityCoefficient struct {
 type CalculationHistory struct {
 	StartDate *time.Time `gorm:"column:startdate"`
 	EndDate   *time.Time `gorm:"column:enddate"`
+	Error     string     `gorm:"column:error"`
 	UserName  string     `gorm:"column:username"`
 	SyncMode  string     `gorm:"column:syncmode"`
 	Value     *float64   `gorm:"column:dcvalue"`
