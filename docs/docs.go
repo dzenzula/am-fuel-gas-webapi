@@ -138,6 +138,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/GetParameterHistory": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parameters"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Id параметра",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateHistory"
+                        }
+                    }
+                }
+            }
+        },
         "/api/GetParameters": {
             "get": {
                 "consumes": [
@@ -323,12 +360,6 @@ const docTemplate = `{
                 },
                 "timestamp": {
                     "type": "string"
-                },
-                "updateHistory": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UpdateHistory"
-                    }
                 },
                 "value": {
                     "type": "number"

@@ -1,7 +1,6 @@
 package database
 
 import (
-	"encoding/json"
 	c "main/configuration"
 	"main/models"
 	"strconv"
@@ -72,15 +71,14 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 }
 
 func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
-	var tmp []models.GetManualFuelGas
 	var gas []models.GetManualFuelGas
 	dateStart := date.Format("2006-01-02")
 	//dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
-	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag(?)"
-	dbc.db.Raw(queryGetData, dateStart).Scan(&tmp)
+	queryGetData := "SELECT * FROM \"analytics-time-group\".get_last_manual_data(?)"
+	dbc.db.Raw(queryGetData, dateStart).Scan(&gas)
 
-	for _, t := range tmp {
+	/*for _, t := range tmp {
 		var updateHistory []models.UpdateHistory
 		err := json.Unmarshal([]byte(*t.UpdateHistoryJSON), &updateHistory)
 		if err != nil {
@@ -93,9 +91,19 @@ func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 		}
 		gas = append(gas, g)
 
-	}
+	}*/
 
 	return gas
+}
+
+func (dbc *DBConnection) GetDataHistory(date time.Time, id string) []models.UpdateHistory {
+	var history []models.UpdateHistory
+	dateStart := date.Format("2006-01-02")
+
+	queryGetHistory := "SELECT * FROM \"analytics-time-group\".get_manual_data_history(?,?)"
+	dbc.db.Raw(queryGetHistory, dateStart, id).Scan(&history)
+
+	return history
 }
 
 func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensityCoefficient {

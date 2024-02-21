@@ -64,10 +64,6 @@ definitions:
         type: string
       timestamp:
         type: string
-      updateHistory:
-        items:
-          $ref: '#/definitions/models.UpdateHistory'
-        type: array
       value:
         type: number
     type: object
@@ -185,6 +181,30 @@ paths:
             $ref: '#/definitions/models.GetDensityCoefficient'
       tags:
       - Calculations
+  /api/GetParameterHistory:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Дата получения параметров
+        in: query
+        name: date
+        required: true
+        type: string
+      - description: Id параметра
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UpdateHistory'
+      tags:
+      - Parameters
   /api/GetParameters:
     get:
       consumes:

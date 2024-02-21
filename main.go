@@ -83,6 +83,7 @@ func startGin() {
 	apiGroup.Use(authorization.AuthRequired)
 	{
 		apiGroup.GET("/GetParameters", controller.GetParameters)
+		apiGroup.GET("/GetParameterHistory", controller.GetParameterHistory)
 		apiGroup.POST("/SetParameters", controller.SetParameters)
 		apiGroup.GET("/GetDensityCoefficientDetails", controller.GetDensityCoefficientDetails)
 		apiGroup.POST("/RecalculateDensityCoefficient", controller.RecalculateDensityCoefficient)
