@@ -125,8 +125,8 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensit
 }
 
 func (dbc *DBConnection) RecalculateDensityCoefficient(date string, username string) {
-	queryRecalculate := "CALL \"analytics-time-group\".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)"
-	dbc.db.Raw(queryRecalculate, date, username, DensityCoefId)
+	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)`
+	dbc.db.Exec(queryRecalculate, date, username, DensityCoefId)
 }
 
 func (dbc *DBConnection) GetCalculationsList() []models.CalculationList {
