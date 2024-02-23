@@ -292,6 +292,9 @@ const docTemplate = `{
         "models.CalculationHistory": {
             "type": "object",
             "properties": {
+                "calculationDate": {
+                    "type": "string"
+                },
                 "endDate": {
                     "type": "string"
                 },
@@ -397,12 +400,11 @@ const docTemplate = `{
         "models.UpdateHistory": {
             "type": "object",
             "properties": {
-                "TimestampInsert": {
+                "timestampInsert": {
                     "type": "string"
                 },
-                "Value": {
-                    "type": "string",
-                    "example": "0"
+                "value": {
+                    "type": "number"
                 }
             }
         },

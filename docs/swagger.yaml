@@ -19,6 +19,8 @@ definitions:
     type: object
   models.CalculationHistory:
     properties:
+      calculationDate:
+        type: string
       endDate:
         type: string
       error:
@@ -87,11 +89,10 @@ definitions:
     type: object
   models.UpdateHistory:
     properties:
-      TimestampInsert:
+      timestampInsert:
         type: string
-      Value:
-        example: "0"
-        type: string
+      value:
+        type: number
     type: object
   models.UserData:
     properties:
