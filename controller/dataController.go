@@ -5,6 +5,7 @@ import (
 	conf "main/configuration"
 	"main/database"
 	"main/models"
+	"math"
 	"net/http"
 	"time"
 
@@ -104,8 +105,15 @@ func SetParameters(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
 		return
 	}
+
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	isValid := isValidValue(data.Value)
+	if !isValid {
+		c.JSON(http.StatusBadRequest, "Введите корректное значение")
 		return
 	}
 
@@ -231,4 +239,9 @@ func isValidDate(dateString string) (bool, time.Time) {
 
 	// Возвращаем дату с временем 00:00:00
 	return true, parsedTime.Truncate(24 * time.Hour)
+}
+
+func isValidValue(value float64) bool {
+	res := math.Abs(value*100000-math.Round(value*100000))/100000.0 >= 0.00001 || value != 0
+	return res
 }

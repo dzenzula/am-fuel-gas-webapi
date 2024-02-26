@@ -73,25 +73,9 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 	var gas []models.GetManualFuelGas
 	dateStart := date.Format("2006-01-02")
-	//dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
 	queryGetData := "SELECT * FROM \"analytics-time-group\".get_last_manual_data(?)"
 	dbc.db.Raw(queryGetData, dateStart).Scan(&gas)
-
-	/*for _, t := range tmp {
-		var updateHistory []models.UpdateHistory
-		err := json.Unmarshal([]byte(*t.UpdateHistoryJSON), &updateHistory)
-		if err != nil {
-			fmt.Println(err.Error())
-			return nil
-		}
-		g := t
-		if updateHistory[len(updateHistory)-1].Value != nil {
-			g.UpdateHistory = updateHistory
-		}
-		gas = append(gas, g)
-
-	}*/
 
 	return gas
 }
