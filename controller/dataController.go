@@ -5,7 +5,6 @@ import (
 	conf "main/configuration"
 	"main/database"
 	"main/models"
-	"math"
 	"net/http"
 	"time"
 
@@ -242,6 +241,6 @@ func isValidDate(dateString string) (bool, time.Time) {
 }
 
 func isValidValue(value float64) bool {
-	res := math.Abs(value*100000-math.Round(value*100000))/100000.0 <= 0.00001
+	res := value >= 0.0001
 	return res
 }
