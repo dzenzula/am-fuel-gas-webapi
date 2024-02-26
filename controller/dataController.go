@@ -242,6 +242,6 @@ func isValidDate(dateString string) (bool, time.Time) {
 }
 
 func isValidValue(value float64) bool {
-	res := math.Abs(value*100000-math.Round(value*100000))/100000.0 <= 0.00001 || value != 0
+	res := math.Abs(value*100000-math.Round(value*100000))/100000.0 <= 0.00001
 	return res
 }
