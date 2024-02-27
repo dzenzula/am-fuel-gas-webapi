@@ -1,7 +1,6 @@
 package database
 
 import (
-	"encoding/json"
 	c "main/configuration"
 	"main/models"
 	"strconv"
@@ -72,30 +71,23 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 }
 
 func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
-	var tmp []models.GetManualFuelGas
 	var gas []models.GetManualFuelGas
 	dateStart := date.Format("2006-01-02")
-	//dateEnd := date.Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
-	queryGetData := "SELECT * FROM \"analytics-time-group\".get_manual_data_by_tag(?)"
-	dbc.db.Raw(queryGetData, dateStart).Scan(&tmp)
-
-	for _, t := range tmp {
-		var updateHistory []models.UpdateHistory
-		err := json.Unmarshal([]byte(*t.UpdateHistoryJSON), &updateHistory)
-		if err != nil {
-			fmt.Println(err.Error())
-			return nil
-		}
-		g := t
-		if updateHistory[len(updateHistory)-1].Value != nil {
-			g.UpdateHistory = updateHistory
-		}
-		gas = append(gas, g)
-
-	}
+	queryGetData := "SELECT * FROM \"analytics-time-group\".get_last_manual_data(?)"
+	dbc.db.Raw(queryGetData, dateStart).Scan(&gas)
 
 	return gas
+}
+
+func (dbc *DBConnection) GetDataHistory(date time.Time, id string) []models.UpdateHistory {
+	var history []models.UpdateHistory
+	dateStart := date.Format("2006-01-02")
+
+	queryGetHistory := "SELECT * FROM \"analytics-time-group\".get_manual_data_history(?,?)"
+	dbc.db.Raw(queryGetHistory, dateStart, id).Scan(&history)
+
+	return history
 }
 
 func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensityCoefficient {
@@ -117,8 +109,8 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensit
 }
 
 func (dbc *DBConnection) RecalculateDensityCoefficient(date string, username string) {
-	queryRecalculate := "CALL \"analytics-time-group\".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)"
-	dbc.db.Raw(queryRecalculate, date, username, DensityCoefId)
+	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)`
+	dbc.db.Exec(queryRecalculate, date, username, DensityCoefId)
 }
 
 func (dbc *DBConnection) GetCalculationsList() []models.CalculationList {

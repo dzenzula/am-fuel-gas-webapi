@@ -48,6 +48,45 @@ func GetParameters(c *gin.Context) {
 	c.JSON(http.StatusOK, gas)
 }
 
+// GetParamHistory
+// @Tags Parameters
+// @Accept json
+// @Produce json
+// @Param date query string true "Дата получения параметров"
+// @Param id query int true "Id параметра"
+// @Success 200 {object} models.UpdateHistory
+// @Router /api/GetParameterHistory [get]
+func GetParameterHistory(c *gin.Context) {
+	idMeasuring := c.Query("id")
+	date := c.Query("date")
+
+	isValid, truncatedTime := isValidDate(date)
+	if !isValid {
+		c.JSON(http.StatusBadRequest, "Дата не корректна.")
+		return
+	}
+
+	permissions := []string{conf.GlobalConfig.Permissions.Show}
+	authorization.Init(c)
+
+	checkPermissions := authorization.CheckAnyPermission(permissions)
+	if checkPermissions != authorization.Ok {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+		return
+	}
+
+	db, err := database.ConnectToPostgresDataBase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	history := db.GetDataHistory(truncatedTime, idMeasuring)
+
+	db.Close()
+	c.JSON(http.StatusOK, history)
+}
+
 // SetParam
 // @Tags Parameters
 // @Accept json
@@ -65,8 +104,15 @@ func SetParameters(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
 		return
 	}
+
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	isValid := isValidValue(data.Value)
+	if !isValid {
+		c.JSON(http.StatusBadRequest, "Введите корректное значение")
 		return
 	}
 
@@ -192,4 +238,9 @@ func isValidDate(dateString string) (bool, time.Time) {
 
 	// Возвращаем дату с временем 00:00:00
 	return true, parsedTime.Truncate(24 * time.Hour)
+}
+
+func isValidValue(value float64) bool {
+	res := value >= 0.0001
+	return res
 }
