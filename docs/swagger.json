@@ -127,6 +127,36 @@
                 }
             }
         },
+        "/api/GetImbalanceDetails": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetImbalanceDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/api/GetParameterHistory": {
             "get": {
                 "consumes": [
@@ -212,6 +242,45 @@
                         "name": "date",
                         "in": "query",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/RecalculateImbalance": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные расчета небаланс",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SetImbalanceFlagAndAdjustment"
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -332,6 +401,47 @@
                 }
             }
         },
+        "models.GetImbalanceDetails": {
+            "type": "object",
+            "properties": {
+                "aggregateTotal": {
+                    "type": "string"
+                },
+                "autoTotal": {
+                    "type": "string"
+                },
+                "calculationDate": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "manualTotal": {
+                    "type": "string"
+                },
+                "nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Node"
+                    }
+                },
+                "pgRedisTotal": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "syncMode": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "models.GetManualFuelGas": {
             "type": "object",
             "properties": {
@@ -365,6 +475,40 @@
                     "type": "string"
                 },
                 "permission": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Node": {
+            "type": "object",
+            "properties": {
+                "consumption": {
+                    "type": "string"
+                },
+                "distributed": {
+                    "type": "string"
+                },
+                "flag": {
+                    "type": "string"
+                },
+                "gas_redistribution": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SetImbalanceFlagAndAdjustment": {
+            "type": "object",
+            "properties": {
+                "adjustment": {
+                    "type": "string"
+                },
+                "flag": {
+                    "type": "string"
+                },
+                "measuringId": {
                     "type": "integer"
                 }
             }

@@ -22,22 +22,17 @@ import (
 func GetParameters(c *gin.Context) {
 	date := c.Query("date")
 
-	isValid, truncatedTime := isValidDate(date)
+	isValid, truncatedTime := isValidDate(c, date)
 	if !isValid {
-		c.JSON(http.StatusBadRequest, "Дата не корректна.")
 		return
 	}
 
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
-	authorization.Init(c)
-
-	checkPermissions := authorization.CheckAnyPermission(permissions)
-	if checkPermissions != authorization.Ok {
-		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+	if !checkPermissions(c, permissions) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	db, err := connectToDatabase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -60,22 +55,17 @@ func GetParameterHistory(c *gin.Context) {
 	idMeasuring := c.Query("id")
 	date := c.Query("date")
 
-	isValid, truncatedTime := isValidDate(date)
+	isValid, truncatedTime := isValidDate(c, date)
 	if !isValid {
-		c.JSON(http.StatusBadRequest, "Дата не корректна.")
 		return
 	}
 
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
-	authorization.Init(c)
-
-	checkPermissions := authorization.CheckAnyPermission(permissions)
-	if checkPermissions != authorization.Ok {
-		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+	if !checkPermissions(c, permissions) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	db, err := connectToDatabase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -98,10 +88,7 @@ func SetParameters(c *gin.Context) {
 	var data models.SetManualFuelGas
 	permissions := []string{conf.GlobalConfig.Permissions.Edit}
 
-	authorization.Init(c)
-	checkPermissions := authorization.CheckAnyPermission(permissions)
-	if checkPermissions != authorization.Ok {
-		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+	if !checkPermissions(c, permissions) {
 		return
 	}
 
@@ -116,7 +103,7 @@ func SetParameters(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	db, err := connectToDatabase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -142,20 +129,16 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
 
-	isValid, _ := isValidDate(date)
+	isValid, _ := isValidDate(c, date)
 	if !isValid {
-		c.JSON(http.StatusBadRequest, "Дата не корректна.")
 		return
 	}
 
-	authorization.Init(c)
-	checkPermissions := authorization.CheckAnyPermission(permissions)
-	if checkPermissions != authorization.Ok {
-		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+	if !checkPermissions(c, permissions) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	db, err := connectToDatabase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -177,20 +160,16 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
-	isValid, _ := isValidDate(date)
+	isValid, _ := isValidDate(c, date)
 	if !isValid {
-		c.JSON(http.StatusBadRequest, "Дата не корректна.")
 		return
 	}
 
-	authorization.Init(c)
-	checkPermissions := authorization.CheckAnyPermission(permissions)
-	if checkPermissions != authorization.Ok {
-		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+	if !checkPermissions(c, permissions) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	db, err := connectToDatabase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -199,6 +178,51 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 	username := authorization.ReturnDomainUser()
 	db.RecalculateDensityCoefficient(date, username)
 	db.Close()
+	c.JSON(http.StatusOK, "Calculation succsessful")
+}
+
+// GetImbalanceDetails
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Param date query string true "Дата получения параметров"
+// @Success 200 {object} models.GetImbalanceDetails
+// @Router /api/GetImbalanceDetails [get]
+func GetImbalanceDetails(c *gin.Context) {
+	var data []models.GetImbalanceDetails
+	date := c.Query("date")
+	permissions := []string{conf.GlobalConfig.Permissions.Show}
+
+	isValid, _ := isValidDate(c, date)
+	if !isValid {
+
+		return
+	}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := connectToDatabase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data = db.GetDensityImbalanceData(date)
+	db.Close()
+	c.JSON(http.StatusOK, data)
+}
+
+// RecalculateImbalance
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Param date query string true "Дата получения параметров"
+// @Param data body []models.SetImbalanceFlagAndAdjustment true "Данные расчета небаланс"
+// @Success 200
+// @Router /api/RecalculateImbalance [post]
+func RecalculateImbalance(c *gin.Context) {
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 
@@ -211,14 +235,11 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 func GetCalculationsList(c *gin.Context) {
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
-	authorization.Init(c)
-	checkPermissions := authorization.CheckAnyPermission(permissions)
-	if checkPermissions != authorization.Ok {
-		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %d", checkPermissions))
+	if !checkPermissions(c, permissions) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	db, err := connectToDatabase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -229,10 +250,11 @@ func GetCalculationsList(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
-func isValidDate(dateString string) (bool, time.Time) {
+func isValidDate(c *gin.Context, dateString string) (bool, time.Time) {
 	layout := "2006-01-02"
 	parsedTime, err := time.Parse(layout, dateString)
 	if err != nil {
+		c.JSON(http.StatusBadRequest, "Дата не корректна.")
 		return false, time.Time{}
 	}
 
@@ -243,4 +265,22 @@ func isValidDate(dateString string) (bool, time.Time) {
 func isValidValue(value float64) bool {
 	res := value >= 0.0001
 	return res
+}
+
+func checkPermissions(c *gin.Context, permissions []string) bool {
+	authorization.Init(c)
+	checkPermissions := authorization.CheckAnyPermission(permissions)
+	if checkPermissions != authorization.Ok {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %s", string(checkPermissions)))
+		return false
+	}
+	return true
+}
+
+func connectToDatabase() (*database.DBConnection, error) {
+	db, err := database.ConnectToPostgresDataBase()
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
 }

@@ -45,14 +45,14 @@ type GetImbalanceDetails struct {
 	StartDate       *time.Time `gorm:"column:start_date"`
 	CalculationDate *time.Time `gorm:"column:calculation_date"`
 	EndDate         *time.Time `gorm:"column:end_date"`
-	ManualTotal     string     `gorm:"column:manual_total"`
-	AutoTotal       string     `gorm:"column:auto_total"`
-	AggregateTotal  string     `gorm:"column:aggregate_total"`
-	PgRedisTotal    string     `gorm:"column:pg_redis_total"`
-	Error           string     `gorm:"column:error"`
-	Username        string     `gorm:"column:username"`
-	SyncMode        string     `gorm:"column:syncmode"`
-	NodesString     string     `gorm:"column:nodes"`
+	ManualTotal     *string    `gorm:"column:manual_total"`
+	AutoTotal       *string    `gorm:"column:auto_total"`
+	AggregateTotal  *string    `gorm:"column:aggregate_total"`
+	PgRedisTotal    *string    `gorm:"column:pg_redis_total"`
+	Error           *string    `gorm:"column:error"`
+	Username        *string    `gorm:"column:username"`
+	SyncMode        *string    `gorm:"column:syncmode"`
+	NodesString     string     `gorm:"column:nodes" swaggerignore:"true" json:"-"`
 	Nodes           []Node     `gorm:"-"`
 }
 
@@ -62,6 +62,12 @@ type Node struct {
 	Consumption       string `json:"consumption"`
 	GasRedistribution string `json:"gas_redistribution"`
 	Distributed       string `json:"distributed"`
+}
+
+type SetImbalanceFlagAndAdjustment struct {
+	MeasuringId int
+	Flag        string
+	Adjustment  string
 }
 
 type CalculationList struct {

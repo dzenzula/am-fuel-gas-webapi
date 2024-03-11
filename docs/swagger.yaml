@@ -52,6 +52,33 @@ definitions:
       densityCoefficient:
         type: number
     type: object
+  models.GetImbalanceDetails:
+    properties:
+      aggregateTotal:
+        type: string
+      autoTotal:
+        type: string
+      calculationDate:
+        type: string
+      endDate:
+        type: string
+      error:
+        type: string
+      manualTotal:
+        type: string
+      nodes:
+        items:
+          $ref: '#/definitions/models.Node'
+        type: array
+      pgRedisTotal:
+        type: string
+      startDate:
+        type: string
+      syncMode:
+        type: string
+      username:
+        type: string
+    type: object
   models.GetManualFuelGas:
     properties:
       description:
@@ -74,6 +101,28 @@ definitions:
       name:
         type: string
       permission:
+        type: integer
+    type: object
+  models.Node:
+    properties:
+      consumption:
+        type: string
+      distributed:
+        type: string
+      flag:
+        type: string
+      gas_redistribution:
+        type: string
+      value:
+        type: string
+    type: object
+  models.SetImbalanceFlagAndAdjustment:
+    properties:
+      adjustment:
+        type: string
+      flag:
+        type: string
+      measuringId:
         type: integer
     type: object
   models.SetManualFuelGas:
@@ -182,6 +231,25 @@ paths:
             $ref: '#/definitions/models.GetDensityCoefficient'
       tags:
       - Calculations
+  /api/GetImbalanceDetails:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Дата получения параметров
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetImbalanceDetails'
+      tags:
+      - Calculations
   /api/GetParameterHistory:
     get:
       consumes:
@@ -235,6 +303,31 @@ paths:
         name: date
         required: true
         type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      tags:
+      - Calculations
+  /api/RecalculateImbalance:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Дата получения параметров
+        in: query
+        name: date
+        required: true
+        type: string
+      - description: Данные расчета небаланс
+        in: body
+        name: data
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SetImbalanceFlagAndAdjustment'
+          type: array
       produces:
       - application/json
       responses:
