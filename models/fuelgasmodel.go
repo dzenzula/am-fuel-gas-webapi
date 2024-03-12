@@ -66,10 +66,9 @@ type Node struct {
 	Distributed       string
 }
 
-type SetImbalanceFlagAndAdjustment struct {
+type SetImbalanceFlag struct {
 	MeasuringId int
 	Flag        string
-	Adjustment  string
 }
 
 type CalculationList struct {
