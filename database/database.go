@@ -115,7 +115,7 @@ func (dbc *DBConnection) RecalculateDensityCoefficient(date string, username str
 	dbc.db.Exec(queryRecalculate, date, username, DensityCoefId)
 }
 
-func (dbc *DBConnection) GetDensityImbalanceData(date string) []models.GetImbalanceDetails {
+func (dbc *DBConnection) GetImbalanceData(date string) []models.GetImbalanceDetails {
 	var res []models.GetImbalanceDetails
 
 	queryGetImbalance := `SELECT * FROM "analytics-time-group".get_imbalance_calculations(?)`
@@ -128,6 +128,11 @@ func (dbc *DBConnection) GetDensityImbalanceData(date string) []models.GetImbala
 	}
 
 	return res
+}
+
+func (dbc *DBConnection) RecalculateImbalance(date string, username string, setData string) {
+	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)`
+	dbc.db.Exec(queryRecalculate, date, username, ImbalanceId, setData)
 }
 
 func (dbc *DBConnection) GetCalculationsList() []models.CalculationList {

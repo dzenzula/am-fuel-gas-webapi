@@ -419,6 +419,9 @@
                 "error": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "integer"
+                },
                 "manualTotal": {
                     "type": "string"
                 },
@@ -493,6 +496,9 @@
                 },
                 "gas_redistribution": {
                     "type": "string"
+                },
+                "measuring_id": {
+                    "type": "integer"
                 },
                 "value": {
                     "type": "string"

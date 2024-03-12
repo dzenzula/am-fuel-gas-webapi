@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"io"
 	conf "main/configuration"
 	"main/database"
 	"main/models"
@@ -195,7 +196,6 @@ func GetImbalanceDetails(c *gin.Context) {
 
 	isValid, _ := isValidDate(c, date)
 	if !isValid {
-
 		return
 	}
 
@@ -209,7 +209,7 @@ func GetImbalanceDetails(c *gin.Context) {
 		return
 	}
 
-	data = db.GetDensityImbalanceData(date)
+	data = db.GetImbalanceData(date)
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
@@ -223,6 +223,33 @@ func GetImbalanceDetails(c *gin.Context) {
 // @Success 200
 // @Router /api/RecalculateImbalance [post]
 func RecalculateImbalance(c *gin.Context) {
+	date := c.Query("date")
+	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
+
+	isValid, _ := isValidDate(c, date)
+	if !isValid {
+		return
+	}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := connectToDatabase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	jsonData, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	username := authorization.ReturnDomainUser()
+	db.RecalculateImbalance(date, username, string(jsonData))
+	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 

@@ -430,6 +430,9 @@ const docTemplate = `{
                 "error": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "integer"
+                },
                 "manualTotal": {
                     "type": "string"
                 },
@@ -504,6 +507,9 @@ const docTemplate = `{
                 },
                 "gas_redistribution": {
                     "type": "string"
+                },
+                "measuring_id": {
+                    "type": "integer"
                 },
                 "value": {
                     "type": "string"

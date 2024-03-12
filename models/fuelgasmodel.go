@@ -42,6 +42,7 @@ type CalculationHistory struct {
 }
 
 type GetImbalanceDetails struct {
+	Id              string     `gorm:"column:calc_batch"`
 	StartDate       *time.Time `gorm:"column:start_date"`
 	CalculationDate *time.Time `gorm:"column:calculation_date"`
 	EndDate         *time.Time `gorm:"column:end_date"`
@@ -57,11 +58,12 @@ type GetImbalanceDetails struct {
 }
 
 type Node struct {
-	Value             string `json:"value"`
-	Flag              string `json:"flag"`
-	Consumption       string `json:"consumption"`
-	GasRedistribution string `json:"gas_redistribution"`
-	Distributed       string `json:"distributed"`
+	MeasuringId       int64 `json:",string"`
+	Value             string
+	Flag              string
+	Consumption       string
+	GasRedistribution string
+	Distributed       string
 }
 
 type SetImbalanceFlagAndAdjustment struct {
