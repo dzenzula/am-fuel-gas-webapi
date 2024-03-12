@@ -131,7 +131,7 @@ func (dbc *DBConnection) GetImbalanceData(date string) []models.GetImbalanceDeta
 }
 
 func (dbc *DBConnection) RecalculateImbalance(date string, username string, setData string) {
-	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)`
+	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?, ?)`
 	dbc.db.Exec(queryRecalculate, date, username, ImbalanceId, setData)
 }
 
