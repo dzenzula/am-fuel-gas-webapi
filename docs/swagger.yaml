@@ -17,7 +17,16 @@ definitions:
       type:
         type: string
     type: object
-  models.CalculationHistory:
+  models.CalculationList:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.DensityCalculationHistory:
     properties:
       calculationDate:
         type: string
@@ -34,38 +43,14 @@ definitions:
       value:
         type: number
     type: object
-  models.CalculationList:
-    properties:
-      description:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  models.GetDensityCoefficient:
-    properties:
-      calculationHistory:
-        items:
-          $ref: '#/definitions/models.CalculationHistory'
-        type: array
-      densityCoefficient:
-        type: number
-    type: object
-  models.GetImbalanceDetails:
+  models.GetCalculatedImbalanceDetails:
     properties:
       aggregateTotal:
         type: string
       autoTotal:
         type: string
-      calculationDate:
-        type: string
-      endDate:
-        type: string
-      error:
-        type: string
       id:
-        type: integer
+        type: string
       manualTotal:
         type: string
       nodes:
@@ -74,12 +59,15 @@ definitions:
         type: array
       pgRedisTotal:
         type: string
-      startDate:
-        type: string
-      syncMode:
-        type: string
-      username:
-        type: string
+    type: object
+  models.GetDensityCoefficient:
+    properties:
+      calculationHistory:
+        items:
+          $ref: '#/definitions/models.DensityCalculationHistory'
+        type: array
+      densityCoefficient:
+        type: number
     type: object
   models.GetManualFuelGas:
     properties:
@@ -98,6 +86,23 @@ definitions:
       value:
         type: number
     type: object
+  models.ImbalanceCalculationHistory:
+    properties:
+      calculationDate:
+        type: string
+      endDate:
+        type: string
+      error:
+        type: string
+      id:
+        type: string
+      startDate:
+        type: string
+      syncMode:
+        type: string
+      userName:
+        type: string
+    type: object
   models.MyPermission:
     properties:
       name:
@@ -113,17 +118,22 @@ definitions:
         type: string
       flag:
         type: string
-      gas_redistribution:
+      gasRedistribution:
         type: string
-      measuring_id:
+      measuringId:
         type: integer
       value:
         type: string
     type: object
-  models.SetImbalanceFlagAndAdjustment:
+  models.NodeList:
     properties:
-      adjustment:
+      description:
         type: string
+      id:
+        type: integer
+    type: object
+  models.SetImbalanceFlag:
+    properties:
       flag:
         type: string
       measuringId:
@@ -203,6 +213,25 @@ paths:
           description: OK
       tags:
       - Authorization
+  /api/GetCalculatedImbalanceHistory:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Id batch расчета
+        in: query
+        name: batch
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetCalculatedImbalanceDetails'
+      tags:
+      - Calculations
   /api/GetCalculationsList:
     get:
       consumes:
@@ -235,7 +264,7 @@ paths:
             $ref: '#/definitions/models.GetDensityCoefficient'
       tags:
       - Calculations
-  /api/GetImbalanceDetails:
+  /api/GetImbalanceHistory:
     get:
       consumes:
       - application/json
@@ -251,7 +280,22 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.GetImbalanceDetails'
+            items:
+              $ref: '#/definitions/models.ImbalanceCalculationHistory'
+            type: array
+      tags:
+      - Calculations
+  /api/GetNodesList:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NodeList'
       tags:
       - Calculations
   /api/GetParameterHistory:
@@ -330,7 +374,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.SetImbalanceFlagAndAdjustment'
+            $ref: '#/definitions/models.SetImbalanceFlag'
           type: array
       produces:
       - application/json

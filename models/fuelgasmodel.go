@@ -28,10 +28,10 @@ type SetManualFuelGas struct {
 
 type GetDensityCoefficient struct {
 	DensityCoefficient *float64 `gorm:"column:value"`
-	CalculationHistory []CalculationHistory
+	CalculationHistory []DensityCalculationHistory
 }
 
-type CalculationHistory struct {
+type DensityCalculationHistory struct {
 	StartDate       *time.Time `gorm:"column:start_date"`
 	CalculationDate *time.Time `gorm:"column:calculation_date"`
 	EndDate         *time.Time `gorm:"column:end_date"`
@@ -41,24 +41,28 @@ type CalculationHistory struct {
 	Value           *float64   `gorm:"column:dcvalue"`
 }
 
-type GetImbalanceDetails struct {
+type ImbalanceCalculationHistory struct {
 	Id              string     `gorm:"column:calc_batch"`
 	StartDate       *time.Time `gorm:"column:start_date"`
 	CalculationDate *time.Time `gorm:"column:calculation_date"`
 	EndDate         *time.Time `gorm:"column:end_date"`
-	ManualTotal     *string    `gorm:"column:manual_total"`
-	AutoTotal       *string    `gorm:"column:auto_total"`
-	AggregateTotal  *string    `gorm:"column:aggregate_total"`
-	PgRedisTotal    *string    `gorm:"column:pg_redis_total"`
-	Error           *string    `gorm:"column:error"`
-	Username        *string    `gorm:"column:username"`
-	SyncMode        *string    `gorm:"column:syncmode"`
-	NodesString     string     `gorm:"column:nodes" swaggerignore:"true" json:"-"`
-	Nodes           []Node     `gorm:"-"`
+	Error           string     `gorm:"column:error"`
+	UserName        string     `gorm:"column:username"`
+	SyncMode        string     `gorm:"column:syncmode"`
+}
+
+type GetCalculatedImbalanceDetails struct {
+	Id             string  `gorm:"column:calc_batch"`
+	ManualTotal    *string `gorm:"column:manual_total"`
+	AutoTotal      *string `gorm:"column:auto_total"`
+	AggregateTotal *string `gorm:"column:aggregate_total"`
+	PgRedisTotal   *string `gorm:"column:pg_redis_total"`
+	NodesString    string  `gorm:"column:nodes" swaggerignore:"true" json:"-"`
+	Nodes          []Node  `gorm:"-"`
 }
 
 type Node struct {
-	MeasuringId       int64 `json:",string"`
+	MeasuringId       int64
 	Value             string
 	Flag              string
 	Consumption       string
@@ -69,6 +73,11 @@ type Node struct {
 type SetImbalanceFlag struct {
 	MeasuringId int
 	Flag        string
+}
+
+type NodeList struct {
+	Id          int
+	Description string
 }
 
 type CalculationList struct {

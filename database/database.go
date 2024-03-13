@@ -1,7 +1,6 @@
 package database
 
 import (
-	"encoding/json"
 	c "main/configuration"
 	"main/models"
 	"strconv"
@@ -94,7 +93,7 @@ func (dbc *DBConnection) GetDataHistory(date time.Time, id string) []models.Upda
 
 func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensityCoefficient {
 	var res models.GetDensityCoefficient
-	var history []models.CalculationHistory
+	var history []models.DensityCalculationHistory
 
 	queryGetDensityCoefficient := "SELECT * FROM \"analytics-time-group\".get_density_coefficient(?)"
 	dbc.db.Raw(queryGetDensityCoefficient, date).Scan(&history)
@@ -115,17 +114,20 @@ func (dbc *DBConnection) RecalculateDensityCoefficient(date string, username str
 	dbc.db.Exec(queryRecalculate, date, username, DensityCoefId)
 }
 
-func (dbc *DBConnection) GetImbalanceData(date string) []models.GetImbalanceDetails {
-	var res []models.GetImbalanceDetails
+func (dbc *DBConnection) GetImbalanceHistory(date string) []models.ImbalanceCalculationHistory {
+	var res []models.ImbalanceCalculationHistory
 
-	queryGetImbalance := `SELECT * FROM "analytics-time-group".get_imbalance_calculations(?)`
-	dbc.db.Raw(queryGetImbalance, date).Scan(&res)
+	queryGetImbalanceHistory := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_history(?)`
+	dbc.db.Raw(queryGetImbalanceHistory, date).Scan(&res)
 
-	for i := range res {
-		var nodes []models.Node
-		json.Unmarshal([]byte(res[i].NodesString), &nodes)
-		res[i].Nodes = nodes
-	}
+	return res
+}
+
+func (dbc *DBConnection) GetCalculatedImbalanceDetails(batch string) models.GetCalculatedImbalanceDetails {
+	var res models.GetCalculatedImbalanceDetails
+
+	queryGetImbalanceDetails := `SELECT FROM * FROM "analytics-time-group".get_imbalance_calculation_data(?)`
+	dbc.db.Raw(queryGetImbalanceDetails, batch).Scan(&res)
 
 	return res
 }
@@ -133,6 +135,19 @@ func (dbc *DBConnection) GetImbalanceData(date string) []models.GetImbalanceDeta
 func (dbc *DBConnection) RecalculateImbalance(date string, username string, setData string) {
 	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?, ?)`
 	dbc.db.Exec(queryRecalculate, date, username, ImbalanceId, setData)
+}
+
+func (dbc *DBConnection) GetNodesList() []models.NodeList {
+	var res []models.NodeList
+
+	queryGetNodes := `SELECT id, description FROM "raw-data".measurings
+						WHERE id IN (
+							SELECT "raw-data".get_id_measuring_by_tags('AmFuelGas', 'NatGas', 'input', 'day')
+						)
+						AND id NOT IN (1703746063311, 1703746063312, 1703746063313, 1707468553, 1703751302145)`
+	dbc.db.Raw(queryGetNodes).Scan(&res)
+
+	return res
 }
 
 func (dbc *DBConnection) GetCalculationsList() []models.CalculationList {

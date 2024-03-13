@@ -87,6 +87,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/GetCalculatedImbalanceHistory": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id batch расчета",
+                        "name": "batch",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetCalculatedImbalanceDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/api/GetCalculationsList": {
             "get": {
                 "consumes": [
@@ -138,7 +168,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/GetImbalanceDetails": {
+        "/api/GetImbalanceHistory": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -162,7 +192,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.GetImbalanceDetails"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ImbalanceCalculationHistory"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/GetNodesList": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.NodeList"
                         }
                     }
                 }
@@ -289,7 +343,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.SetImbalanceFlagAndAdjustment"
+                                "$ref": "#/definitions/models.SetImbalanceFlag"
                             }
                         }
                     }
@@ -358,7 +412,21 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CalculationHistory": {
+        "models.CalculationList": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DensityCalculationHistory": {
             "type": "object",
             "properties": {
                 "calculationDate": {
@@ -384,35 +452,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CalculationList": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.GetDensityCoefficient": {
-            "type": "object",
-            "properties": {
-                "calculationHistory": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CalculationHistory"
-                    }
-                },
-                "densityCoefficient": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.GetImbalanceDetails": {
+        "models.GetCalculatedImbalanceDetails": {
             "type": "object",
             "properties": {
                 "aggregateTotal": {
@@ -421,17 +461,8 @@ const docTemplate = `{
                 "autoTotal": {
                     "type": "string"
                 },
-                "calculationDate": {
-                    "type": "string"
-                },
-                "endDate": {
-                    "type": "string"
-                },
-                "error": {
-                    "type": "string"
-                },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "manualTotal": {
                     "type": "string"
@@ -444,15 +475,20 @@ const docTemplate = `{
                 },
                 "pgRedisTotal": {
                     "type": "string"
+                }
+            }
+        },
+        "models.GetDensityCoefficient": {
+            "type": "object",
+            "properties": {
+                "calculationHistory": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DensityCalculationHistory"
+                    }
                 },
-                "startDate": {
-                    "type": "string"
-                },
-                "syncMode": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
+                "densityCoefficient": {
+                    "type": "number"
                 }
             }
         },
@@ -482,6 +518,32 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ImbalanceCalculationHistory": {
+            "type": "object",
+            "properties": {
+                "calculationDate": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "syncMode": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
         "models.MyPermission": {
             "type": "object",
             "properties": {
@@ -505,10 +567,10 @@ const docTemplate = `{
                 "flag": {
                     "type": "string"
                 },
-                "gas_redistribution": {
+                "gasRedistribution": {
                     "type": "string"
                 },
-                "measuring_id": {
+                "measuringId": {
                     "type": "integer"
                 },
                 "value": {
@@ -516,12 +578,20 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SetImbalanceFlagAndAdjustment": {
+        "models.NodeList": {
             "type": "object",
             "properties": {
-                "adjustment": {
+                "description": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SetImbalanceFlag": {
+            "type": "object",
+            "properties": {
                 "flag": {
                     "type": "string"
                 },

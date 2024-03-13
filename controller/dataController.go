@@ -182,15 +182,15 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 
-// GetImbalanceDetails
+// GetImbalanceHistory
 // @Tags Calculations
 // @Accept json
 // @Produce json
 // @Param date query string true "Дата получения параметров"
-// @Success 200 {object} models.GetImbalanceDetails
-// @Router /api/GetImbalanceDetails [get]
-func GetImbalanceDetails(c *gin.Context) {
-	var data []models.GetImbalanceDetails
+// @Success 200 {object} []models.ImbalanceCalculationHistory
+// @Router /api/GetImbalanceHistory [get]
+func GetImbalanceHistory(c *gin.Context) {
+	var data []models.ImbalanceCalculationHistory
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
 
@@ -209,7 +209,34 @@ func GetImbalanceDetails(c *gin.Context) {
 		return
 	}
 
-	data = db.GetImbalanceData(date)
+	data = db.GetImbalanceHistory(date)
+	db.Close()
+	c.JSON(http.StatusOK, data)
+}
+
+// GetCalculatedImbalanceDetails
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Param batch query string true "Id batch расчета"
+// @Success 200 {object} models.GetCalculatedImbalanceDetails
+// @Router /api/GetCalculatedImbalanceHistory [get]
+func GetCalculatedImbalanceDetails(c *gin.Context) {
+	var data models.GetCalculatedImbalanceDetails
+	batch := c.Query("batch")
+	permissions := []string{conf.GlobalConfig.Permissions.Show}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := connectToDatabase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data = db.GetCalculatedImbalanceDetails(batch)
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
@@ -219,7 +246,7 @@ func GetImbalanceDetails(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param date query string true "Дата получения параметров"
-// @Param data body []models.SetImbalanceFlagAndAdjustment true "Данные расчета небаланс"
+// @Param data body []models.SetImbalanceFlag true "Данные расчета небаланс"
 // @Success 200
 // @Router /api/RecalculateImbalance [post]
 func RecalculateImbalance(c *gin.Context) {
@@ -251,6 +278,30 @@ func RecalculateImbalance(c *gin.Context) {
 	db.RecalculateImbalance(date, username, string(jsonData))
 	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
+}
+
+// GetNodesList
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.NodeList
+// @Router /api/GetNodesList [get]
+func GetNodesList(c *gin.Context) {
+	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := connectToDatabase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data := db.GetNodesList()
+	db.Close()
+	c.JSON(http.StatusOK, data)
 }
 
 // GetCalculationsList
