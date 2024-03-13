@@ -220,9 +220,9 @@ func GetImbalanceHistory(c *gin.Context) {
 // @Produce json
 // @Param batch query string true "Id batch расчета"
 // @Success 200 {object} models.GetCalculatedImbalanceDetails
-// @Router /api/GetCalculatedImbalanceHistory [get]
+// @Router /api/GetCalculatedImbalanceDetails [get]
 func GetCalculatedImbalanceDetails(c *gin.Context) {
-	var data models.GetCalculatedImbalanceDetails
+	var data models.GetCalculatedImbalanceDetails 
 	batch := c.Query("batch")
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
 

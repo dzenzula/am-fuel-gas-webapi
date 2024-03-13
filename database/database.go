@@ -125,9 +125,17 @@ func (dbc *DBConnection) GetImbalanceHistory(date string) []models.ImbalanceCalc
 
 func (dbc *DBConnection) GetCalculatedImbalanceDetails(batch string) models.GetCalculatedImbalanceDetails {
 	var res models.GetCalculatedImbalanceDetails
+	var data models.ImbalanceCalculation
+	var nodes []models.Node
 
-	queryGetImbalanceDetails := `SELECT FROM * FROM "analytics-time-group".get_imbalance_calculation_data(?)`
-	dbc.db.Raw(queryGetImbalanceDetails, batch).Scan(&res)
+	queryGetImbalanceData := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_data(?)`
+	dbc.db.Raw(queryGetImbalanceData, batch).Scan(&data)
+
+	queryGetImbalanceNodes := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_data_nodes(?)`
+	dbc.db.Raw(queryGetImbalanceNodes, batch).Scan(&nodes)
+
+	res.ImbalanceCalculation = data
+	res.Nodes = nodes
 
 	return res
 }

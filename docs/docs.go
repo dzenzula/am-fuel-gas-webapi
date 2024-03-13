@@ -87,7 +87,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/GetCalculatedImbalanceHistory": {
+        "/api/GetCalculatedImbalanceDetails": {
             "get": {
                 "consumes": [
                     "application/json"

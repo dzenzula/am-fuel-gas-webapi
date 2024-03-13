@@ -76,7 +76,7 @@
                 }
             }
         },
-        "/api/GetCalculatedImbalanceHistory": {
+        "/api/GetCalculatedImbalanceDetails": {
             "get": {
                 "consumes": [
                     "application/json"

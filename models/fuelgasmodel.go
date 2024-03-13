@@ -52,27 +52,37 @@ type ImbalanceCalculationHistory struct {
 }
 
 type GetCalculatedImbalanceDetails struct {
+	ImbalanceCalculation ImbalanceCalculation
+	Nodes                []Node
+}
+
+type ImbalanceCalculation struct {
 	Id             string  `gorm:"column:calc_batch"`
+	Nitka1Manual   *string `gorm:"column:nitka1_manual"`
+	Nitka2Manual   *string `gorm:"column:nitka2_manual"`
+	Nitka3Manual   *string `gorm:"column:nitka3_manual"`
+	Grp10Manual    *string `gorm:"column:grp10_manual"`
+	Nitka1Auto     *string `gorm:"column:nitka1_auto"`
+	Nitka2Auto     *string `gorm:"column:nitka2_auto"`
+	Nitka3Auto     *string `gorm:"column:nitka3_auto"`
 	ManualTotal    *string `gorm:"column:manual_total"`
 	AutoTotal      *string `gorm:"column:auto_total"`
 	AggregateTotal *string `gorm:"column:aggregate_total"`
 	PgRedisTotal   *string `gorm:"column:pg_redis_total"`
-	NodesString    string  `gorm:"column:nodes" swaggerignore:"true" json:"-"`
-	Nodes          []Node  `gorm:"-"`
 }
 
 type Node struct {
-	MeasuringId       int64
-	Value             string
-	Flag              string
-	Consumption       string
-	GasRedistribution string
-	Distributed       string
+	Id                int64  `gorm:"column:id"`
+	Value             string `gorm:"column:node_value"`
+	Flag              string `gorm:"column:imbalance_flag"`
+	Distributed       string `gorm:"column:distributed"`
+	GasRedistribution string `gorm:"column:gas_redistribution"`
+	Consumption       string `gorm:"column:consumption"`
 }
 
 type SetImbalanceFlag struct {
-	MeasuringId int
-	Flag        string
+	Id   int
+	Flag string
 }
 
 type NodeList struct {

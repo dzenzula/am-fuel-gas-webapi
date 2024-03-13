@@ -213,7 +213,7 @@ paths:
           description: OK
       tags:
       - Authorization
-  /api/GetCalculatedImbalanceHistory:
+  /api/GetCalculatedImbalanceDetails:
     get:
       consumes:
       - application/json
