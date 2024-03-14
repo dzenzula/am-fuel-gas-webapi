@@ -86,6 +86,12 @@ type SetImbalanceFlag struct {
 	Flag string
 }
 
+type SetAdjustment struct {
+	Id    int
+	Batch string
+	Value string
+}
+
 type NodeList struct {
 	Id          int
 	Description string

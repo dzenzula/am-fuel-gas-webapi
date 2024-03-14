@@ -145,6 +145,11 @@ func (dbc *DBConnection) CalculateImbalance(date string, username string, setDat
 	dbc.db.Exec(queryRecalculate, date, username, ImbalanceId, setData)
 }
 
+func (dbc *DBConnection) SetAdjustment(date string, setData string) {
+	queryAdjustment := `CALL "analytics-time-group".set_update_imbalance_calculation_adjustment(?, ?)`
+	dbc.db.Exec(queryAdjustment, date, setData)
+}
+
 func (dbc *DBConnection) GetNodesList(batch string) []models.NodeList {
 	var res []models.NodeList
 

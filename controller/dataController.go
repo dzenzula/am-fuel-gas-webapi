@@ -280,6 +280,44 @@ func CalculateImbalance(c *gin.Context) {
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 
+// SetAdjustment
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Param date query string true "Дата получения параметров"
+// @Param data body []models.SetAdjustment true "Данные корректировки"
+// @Success 200
+// @Router /api/SetAdjustment [post]
+func SetAdjustment(c *gin.Context) {
+	date := c.Query("date")
+	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
+
+	isValid, _ := isValidDate(c, date)
+	if !isValid {
+		return
+	}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := connectToDatabase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	jsonData, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	db.SetAdjustment(date, string(jsonData))
+	db.Close()
+	c.JSON(http.StatusOK, "Calculation succsessful")
+}
+
 // GetNodesList
 // @Tags Calculations
 // @Accept json

@@ -363,6 +363,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/SetAdjustment": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "description": "Данные корректировки",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SetAdjustment"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/SetParameters": {
             "post": {
                 "consumes": [
@@ -629,6 +661,20 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.SetAdjustment": {
+            "type": "object",
+            "properties": {
+                "batch": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "string"
                 }
             }
         },

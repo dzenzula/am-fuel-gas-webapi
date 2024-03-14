@@ -155,6 +155,15 @@ definitions:
       id:
         type: integer
     type: object
+  models.SetAdjustment:
+    properties:
+      batch:
+        type: string
+      id:
+        type: integer
+      value:
+        type: string
+    type: object
   models.SetImbalanceFlag:
     properties:
       flag:
@@ -404,6 +413,26 @@ paths:
         name: date
         required: true
         type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      tags:
+      - Calculations
+  /api/SetAdjustment:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные корректировки
+        in: body
+        name: data
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SetAdjustment'
+          type: array
       produces:
       - application/json
       responses:

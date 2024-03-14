@@ -92,6 +92,7 @@ func startGin() {
 		apiGroup.POST("/RecalculateImbalance", controller.CalculateImbalance)
 		apiGroup.GET("/GetCalculationsList", controller.GetCalculationsList)
 		apiGroup.GET("/GetNodesList", controller.GetNodesList)
+		apiGroup.POST("/SetAdjustment", controller.SetAdjustment)
 	}
 
 	r.Run(c.GlobalConfig.ServerAddress)
