@@ -131,6 +131,8 @@ definitions:
     type: object
   models.Node:
     properties:
+      adjustment:
+        type: string
       batchId:
         type: string
       consumption:
@@ -425,6 +427,11 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: Дата получения параметров
+        in: query
+        name: date
+        required: true
+        type: string
       - description: Данные корректировки
         in: body
         name: data

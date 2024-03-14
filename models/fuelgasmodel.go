@@ -79,6 +79,7 @@ type Node struct {
 	Distributed       string `gorm:"column:distributed"`
 	GasRedistribution string `gorm:"column:gas_redistribution"`
 	Consumption       string `gorm:"column:consumption"`
+	Adjustment        string `gorm:"column:adjustment"`
 }
 
 type SetImbalanceFlag struct {

@@ -376,6 +376,13 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "description": "Данные корректировки",
                         "name": "data",
                         "in": "body",
@@ -627,6 +634,9 @@ const docTemplate = `{
         "models.Node": {
             "type": "object",
             "properties": {
+                "adjustment": {
+                    "type": "string"
+                },
                 "batchId": {
                     "type": "string"
                 },
