@@ -73,6 +73,7 @@ type ImbalanceCalculation struct {
 
 type Node struct {
 	Id                int64  `gorm:"column:id"`
+	BatchId           string `gorm:"column:batch"`
 	Value             string `gorm:"column:node_value"`
 	Flag              string `gorm:"column:imbalance_flag"`
 	Distributed       string `gorm:"column:distributed"`
@@ -88,6 +89,7 @@ type SetImbalanceFlag struct {
 type NodeList struct {
 	Id          int
 	Description string
+	Flag        string `gorm:"column:imbalance_flag"`
 }
 
 type CalculationList struct {

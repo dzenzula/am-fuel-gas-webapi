@@ -87,6 +87,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/CalculateImbalance": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные расчета небаланс",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SetImbalanceFlag"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/GetCalculatedImbalanceDetails": {
             "get": {
                 "consumes": [
@@ -212,6 +251,14 @@ const docTemplate = `{
                 "tags": [
                     "Calculations"
                 ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id batch расчета",
+                        "name": "batch",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -307,45 +354,6 @@ const docTemplate = `{
                         "name": "date",
                         "in": "query",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/api/RecalculateImbalance": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Calculations"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Дата получения параметров",
-                        "name": "date",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Данные расчета небаланс",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.SetImbalanceFlag"
-                            }
-                        }
                     }
                 ],
                 "responses": {
@@ -455,26 +463,14 @@ const docTemplate = `{
         "models.GetCalculatedImbalanceDetails": {
             "type": "object",
             "properties": {
-                "aggregateTotal": {
-                    "type": "string"
-                },
-                "autoTotal": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "manualTotal": {
-                    "type": "string"
+                "imbalanceCalculation": {
+                    "$ref": "#/definitions/models.ImbalanceCalculation"
                 },
                 "nodes": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Node"
                     }
-                },
-                "pgRedisTotal": {
-                    "type": "string"
                 }
             }
         },
@@ -518,6 +514,47 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ImbalanceCalculation": {
+            "type": "object",
+            "properties": {
+                "aggregateTotal": {
+                    "type": "string"
+                },
+                "autoTotal": {
+                    "type": "string"
+                },
+                "grp10Manual": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "manualTotal": {
+                    "type": "string"
+                },
+                "nitka1Auto": {
+                    "type": "string"
+                },
+                "nitka1Manual": {
+                    "type": "string"
+                },
+                "nitka2Auto": {
+                    "type": "string"
+                },
+                "nitka2Manual": {
+                    "type": "string"
+                },
+                "nitka3Auto": {
+                    "type": "string"
+                },
+                "nitka3Manual": {
+                    "type": "string"
+                },
+                "pgRedisTotal": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ImbalanceCalculationHistory": {
             "type": "object",
             "properties": {
@@ -558,6 +595,9 @@ const docTemplate = `{
         "models.Node": {
             "type": "object",
             "properties": {
+                "batchId": {
+                    "type": "string"
+                },
                 "consumption": {
                     "type": "string"
                 },
@@ -570,7 +610,7 @@ const docTemplate = `{
                 "gasRedistribution": {
                     "type": "string"
                 },
-                "measuringId": {
+                "id": {
                     "type": "integer"
                 },
                 "value": {
@@ -584,6 +624,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "flag": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 }
@@ -595,7 +638,7 @@ const docTemplate = `{
                 "flag": {
                     "type": "string"
                 },
-                "measuringId": {
+                "id": {
                     "type": "integer"
                 }
             }

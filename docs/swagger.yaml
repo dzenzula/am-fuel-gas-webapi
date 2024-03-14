@@ -45,20 +45,12 @@ definitions:
     type: object
   models.GetCalculatedImbalanceDetails:
     properties:
-      aggregateTotal:
-        type: string
-      autoTotal:
-        type: string
-      id:
-        type: string
-      manualTotal:
-        type: string
+      imbalanceCalculation:
+        $ref: '#/definitions/models.ImbalanceCalculation'
       nodes:
         items:
           $ref: '#/definitions/models.Node'
         type: array
-      pgRedisTotal:
-        type: string
     type: object
   models.GetDensityCoefficient:
     properties:
@@ -86,6 +78,33 @@ definitions:
       value:
         type: number
     type: object
+  models.ImbalanceCalculation:
+    properties:
+      aggregateTotal:
+        type: string
+      autoTotal:
+        type: string
+      grp10Manual:
+        type: string
+      id:
+        type: string
+      manualTotal:
+        type: string
+      nitka1Auto:
+        type: string
+      nitka1Manual:
+        type: string
+      nitka2Auto:
+        type: string
+      nitka2Manual:
+        type: string
+      nitka3Auto:
+        type: string
+      nitka3Manual:
+        type: string
+      pgRedisTotal:
+        type: string
+    type: object
   models.ImbalanceCalculationHistory:
     properties:
       calculationDate:
@@ -112,6 +131,8 @@ definitions:
     type: object
   models.Node:
     properties:
+      batchId:
+        type: string
       consumption:
         type: string
       distributed:
@@ -120,7 +141,7 @@ definitions:
         type: string
       gasRedistribution:
         type: string
-      measuringId:
+      id:
         type: integer
       value:
         type: string
@@ -129,6 +150,8 @@ definitions:
     properties:
       description:
         type: string
+      flag:
+        type: string
       id:
         type: integer
     type: object
@@ -136,7 +159,7 @@ definitions:
     properties:
       flag:
         type: string
-      measuringId:
+      id:
         type: integer
     type: object
   models.SetManualFuelGas:
@@ -213,6 +236,31 @@ paths:
           description: OK
       tags:
       - Authorization
+  /api/CalculateImbalance:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Дата получения параметров
+        in: query
+        name: date
+        required: true
+        type: string
+      - description: Данные расчета небаланс
+        in: body
+        name: data
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SetImbalanceFlag'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      tags:
+      - Calculations
   /api/GetCalculatedImbalanceDetails:
     get:
       consumes:
@@ -289,6 +337,11 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: Id batch расчета
+        in: query
+        name: batch
+        type: string
       produces:
       - application/json
       responses:
@@ -351,31 +404,6 @@ paths:
         name: date
         required: true
         type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      tags:
-      - Calculations
-  /api/RecalculateImbalance:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Дата получения параметров
-        in: query
-        name: date
-        required: true
-        type: string
-      - description: Данные расчета небаланс
-        in: body
-        name: data
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.SetImbalanceFlag'
-          type: array
       produces:
       - application/json
       responses:

@@ -44,7 +44,7 @@ func ConnectToPostgresDataBase() (*DBConnection, error) {
 }
 
 func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
-	var queryInsert string = "INSERT INTO \"raw-data\".data(id_measuring, \"timestamp\", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)"
+	var queryInsert string = `INSERT INTO "raw-data".data(id_measuring, "timestamp", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)`
 	var guid string
 	parsedDate, errTime := time.Parse(layout, d.Date)
 	if errTime != nil {
@@ -75,7 +75,7 @@ func (dbc *DBConnection) GetData(date time.Time) []models.GetManualFuelGas {
 	var gas []models.GetManualFuelGas
 	dateStart := date.Format(layout)
 
-	queryGetData := "SELECT * FROM \"analytics-time-group\".get_last_manual_data(?)"
+	queryGetData := `SELECT * FROM "analytics-time-group".get_last_manual_data(?)`
 	dbc.db.Raw(queryGetData, dateStart).Scan(&gas)
 
 	return gas
@@ -85,7 +85,7 @@ func (dbc *DBConnection) GetDataHistory(date time.Time, id string) []models.Upda
 	var history []models.UpdateHistory
 	dateStart := date.Format(layout)
 
-	queryGetHistory := "SELECT * FROM \"analytics-time-group\".get_manual_data_history(?,?)"
+	queryGetHistory := `SELECT * FROM "analytics-time-group".get_manual_data_history(?,?)`
 	dbc.db.Raw(queryGetHistory, dateStart, id).Scan(&history)
 
 	return history
@@ -95,7 +95,7 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) models.GetDensit
 	var res models.GetDensityCoefficient
 	var history []models.DensityCalculationHistory
 
-	queryGetDensityCoefficient := "SELECT * FROM \"analytics-time-group\".get_density_coefficient(?)"
+	queryGetDensityCoefficient := `SELECT * FROM "analytics-time-group".get_density_coefficient(?)`
 	dbc.db.Raw(queryGetDensityCoefficient, date).Scan(&history)
 
 	queryGetLastCoefficient := `SELECT value FROM "raw-data".data 
@@ -140,20 +140,21 @@ func (dbc *DBConnection) GetCalculatedImbalanceDetails(batch string) models.GetC
 	return res
 }
 
-func (dbc *DBConnection) RecalculateImbalance(date string, username string, setData string) {
+func (dbc *DBConnection) CalculateImbalance(date string, username string, setData string) {
 	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?, ?)`
 	dbc.db.Exec(queryRecalculate, date, username, ImbalanceId, setData)
 }
 
-func (dbc *DBConnection) GetNodesList() []models.NodeList {
+func (dbc *DBConnection) GetNodesList(batch string) []models.NodeList {
 	var res []models.NodeList
 
-	queryGetNodes := `SELECT id, description FROM "raw-data".measurings
-						WHERE id IN (
-							SELECT "raw-data".get_id_measuring_by_tags('AmFuelGas', 'NatGas', 'input', 'day')
-						)
-						AND id NOT IN (1703746063311, 1703746063312, 1703746063313, 1707468553, 1703751302145)`
-	dbc.db.Raw(queryGetNodes).Scan(&res)
+	if batch != "" {
+		queryGetNodes := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_nodes_flag(?)`
+		dbc.db.Raw(queryGetNodes, batch).Scan(&res)
+	} else {
+		queryGetNodes := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_nodes_flag()`
+		dbc.db.Raw(queryGetNodes).Scan(&res)
+	}
 
 	return res
 }
@@ -161,7 +162,7 @@ func (dbc *DBConnection) GetNodesList() []models.NodeList {
 func (dbc *DBConnection) GetCalculationsList() []models.CalculationList {
 	var res []models.CalculationList
 	arr := []int{DensityCoefId, ImbalanceId}
-	queryGetCalculationsList := "SELECT id, name, description FROM \"raw-data\".measurings WHERE id IN (?)"
+	queryGetCalculationsList := `SELECT id, name, description FROM "raw-data".measurings WHERE id IN (?)`
 	if err := dbc.db.Raw(queryGetCalculationsList, arr).Scan(&res); err.Error != nil {
 
 	}
