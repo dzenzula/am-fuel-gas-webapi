@@ -35,11 +35,16 @@ func GetParameters(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	gas := db.GetData(truncatedTime)
+	gas, err := db.GetData(truncatedTime)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, gas)
 }
@@ -68,11 +73,15 @@ func GetParameterHistory(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	history := db.GetDataHistory(truncatedTime, idMeasuring)
+	history, err := db.GetDataHistory(truncatedTime, idMeasuring)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	db.Close()
 	c.JSON(http.StatusOK, history)
@@ -94,7 +103,7 @@ func SetParameters(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -106,14 +115,15 @@ func SetParameters(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	if err := db.InsertParametrs(data); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	db.Close()
 	c.JSON(http.StatusOK, "Insert successful")
 }
@@ -141,11 +151,16 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data = db.GetDensityCoefficientData(date)
+	data, err = db.GetDensityCoefficientData(date)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
@@ -172,12 +187,17 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	username := authorization.ReturnDomainUser()
-	db.RecalculateDensityCoefficient(date, username)
+	err = db.RecalculateDensityCoefficient(date, username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
@@ -205,11 +225,16 @@ func GetImbalanceHistory(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data = db.GetImbalanceHistory(date)
+	data, err = db.GetImbalanceHistory(date)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
@@ -232,11 +257,16 @@ func GetCalculatedImbalanceDetails(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data = db.GetCalculatedImbalanceDetails(batch)
+	data, err = db.GetCalculatedImbalanceDetails(batch)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
@@ -270,12 +300,17 @@ func CalculateImbalance(c *gin.Context) {
 
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	username := authorization.ReturnDomainUser()
-	db.CalculateImbalance(date, username, string(jsonData))
+	err = db.CalculateImbalance(date, username, string(jsonData))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
@@ -309,11 +344,16 @@ func SetAdjustment(c *gin.Context) {
 
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	db.SetAdjustment(date, string(jsonData))
+	err = db.SetAdjustment(date, string(jsonData))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
@@ -335,11 +375,16 @@ func GetNodesList(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data := db.GetNodesList(batch)
+	data, err := db.GetNodesList(batch)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
@@ -359,11 +404,16 @@ func GetCalculationsList(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data := db.GetCalculationsList()
+	data, err := db.GetCalculationsList()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
