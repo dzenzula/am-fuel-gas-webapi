@@ -73,6 +73,7 @@ type ImbalanceCalculation struct {
 
 type Node struct {
 	Id                int64  `gorm:"column:id"`
+	Description       string `gorm:"column:description"`
 	BatchId           string `gorm:"column:batch"`
 	Value             string `gorm:"column:node_value"`
 	Flag              string `gorm:"column:imbalance_flag"`
