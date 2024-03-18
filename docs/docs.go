@@ -643,6 +643,9 @@ const docTemplate = `{
                 "consumption": {
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "distributed": {
                     "type": "string"
                 },

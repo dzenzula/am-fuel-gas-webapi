@@ -137,6 +137,8 @@ definitions:
         type: string
       consumption:
         type: string
+      description:
+        type: string
       distributed:
         type: string
       flag:
