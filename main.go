@@ -87,9 +87,12 @@ func startGin() {
 		apiGroup.POST("/SetParameters", controller.SetParameters)
 		apiGroup.GET("/GetDensityCoefficientDetails", controller.GetDensityCoefficientDetails)
 		apiGroup.POST("/RecalculateDensityCoefficient", controller.RecalculateDensityCoefficient)
-		apiGroup.GET("/GetImbalanceDetails", controller.GetImbalanceDetails)
-		apiGroup.POST("/RecalculateImbalance", controller.RecalculateImbalance)
+		apiGroup.GET("/GetImbalanceHistory", controller.GetImbalanceHistory)
+		apiGroup.GET("/GetCalculatedImbalanceDetails", controller.GetCalculatedImbalanceDetails)
+		apiGroup.POST("/CalculateImbalance", controller.CalculateImbalance)
 		apiGroup.GET("/GetCalculationsList", controller.GetCalculationsList)
+		apiGroup.GET("/GetNodesList", controller.GetNodesList)
+		apiGroup.POST("/SetAdjustment", controller.SetAdjustment)
 	}
 
 	r.Run(c.GlobalConfig.ServerAddress)

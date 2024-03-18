@@ -87,6 +87,75 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/CalculateImbalance": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные расчета небаланс",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SetImbalanceFlag"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/GetCalculatedImbalanceDetails": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id batch расчета",
+                        "name": "batch",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetCalculatedImbalanceDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/api/GetCalculationsList": {
             "get": {
                 "consumes": [
@@ -138,7 +207,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/GetImbalanceDetails": {
+        "/api/GetImbalanceHistory": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -162,7 +231,39 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.GetImbalanceDetails"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ImbalanceCalculationHistory"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/GetNodesList": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id batch расчета",
+                        "name": "batch",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.NodeList"
                         }
                     }
                 }
@@ -262,7 +363,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/RecalculateImbalance": {
+        "/api/SetAdjustment": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -282,14 +383,14 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Данные расчета небаланс",
+                        "description": "Данные корректировки",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.SetImbalanceFlagAndAdjustment"
+                                "$ref": "#/definitions/models.SetAdjustment"
                             }
                         }
                     }
@@ -358,7 +459,21 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CalculationHistory": {
+        "models.CalculationList": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DensityCalculationHistory": {
             "type": "object",
             "properties": {
                 "calculationDate": {
@@ -384,17 +499,17 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CalculationList": {
+        "models.GetCalculatedImbalanceDetails": {
             "type": "object",
             "properties": {
-                "description": {
-                    "type": "string"
+                "imbalanceCalculation": {
+                    "$ref": "#/definitions/models.ImbalanceCalculation"
                 },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
+                "nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Node"
+                    }
                 }
             }
         },
@@ -404,55 +519,11 @@ const docTemplate = `{
                 "calculationHistory": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.CalculationHistory"
+                        "$ref": "#/definitions/models.DensityCalculationHistory"
                     }
                 },
                 "densityCoefficient": {
                     "type": "number"
-                }
-            }
-        },
-        "models.GetImbalanceDetails": {
-            "type": "object",
-            "properties": {
-                "aggregateTotal": {
-                    "type": "string"
-                },
-                "autoTotal": {
-                    "type": "string"
-                },
-                "calculationDate": {
-                    "type": "string"
-                },
-                "endDate": {
-                    "type": "string"
-                },
-                "error": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "manualTotal": {
-                    "type": "string"
-                },
-                "nodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Node"
-                    }
-                },
-                "pgRedisTotal": {
-                    "type": "string"
-                },
-                "startDate": {
-                    "type": "string"
-                },
-                "syncMode": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
                 }
             }
         },
@@ -482,6 +553,76 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ImbalanceCalculation": {
+            "type": "object",
+            "properties": {
+                "aggregateTotal": {
+                    "type": "string"
+                },
+                "autoTotal": {
+                    "type": "string"
+                },
+                "calculationDate": {
+                    "type": "string"
+                },
+                "grp10Manual": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "manualTotal": {
+                    "type": "string"
+                },
+                "nitka1Auto": {
+                    "type": "string"
+                },
+                "nitka1Manual": {
+                    "type": "string"
+                },
+                "nitka2Auto": {
+                    "type": "string"
+                },
+                "nitka2Manual": {
+                    "type": "string"
+                },
+                "nitka3Auto": {
+                    "type": "string"
+                },
+                "nitka3Manual": {
+                    "type": "string"
+                },
+                "pgRedisTotal": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ImbalanceCalculationHistory": {
+            "type": "object",
+            "properties": {
+                "calculationDate": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "syncMode": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
         "models.MyPermission": {
             "type": "object",
             "properties": {
@@ -496,7 +637,16 @@ const docTemplate = `{
         "models.Node": {
             "type": "object",
             "properties": {
+                "adjustment": {
+                    "type": "string"
+                },
+                "batchId": {
+                    "type": "string"
+                },
                 "consumption": {
+                    "type": "string"
+                },
+                "description": {
                     "type": "string"
                 },
                 "distributed": {
@@ -505,10 +655,10 @@ const docTemplate = `{
                 "flag": {
                     "type": "string"
                 },
-                "gas_redistribution": {
+                "gasRedistribution": {
                     "type": "string"
                 },
-                "measuring_id": {
+                "id": {
                     "type": "integer"
                 },
                 "value": {
@@ -516,16 +666,41 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SetImbalanceFlagAndAdjustment": {
+        "models.NodeList": {
             "type": "object",
             "properties": {
-                "adjustment": {
+                "description": {
                     "type": "string"
                 },
                 "flag": {
                     "type": "string"
                 },
-                "measuringId": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SetAdjustment": {
+            "type": "object",
+            "properties": {
+                "batch": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SetImbalanceFlag": {
+            "type": "object",
+            "properties": {
+                "flag": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "integer"
                 }
             }

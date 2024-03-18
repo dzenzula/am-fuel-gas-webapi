@@ -35,11 +35,16 @@ func GetParameters(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	gas := db.GetData(truncatedTime)
+	gas, err := db.GetData(truncatedTime)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, gas)
 }
@@ -68,11 +73,15 @@ func GetParameterHistory(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	history := db.GetDataHistory(truncatedTime, idMeasuring)
+	history, err := db.GetDataHistory(truncatedTime, idMeasuring)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	db.Close()
 	c.JSON(http.StatusOK, history)
@@ -94,7 +103,7 @@ func SetParameters(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -106,14 +115,15 @@ func SetParameters(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	if err := db.InsertParametrs(data); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	db.Close()
 	c.JSON(http.StatusOK, "Insert successful")
 }
@@ -141,11 +151,16 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data = db.GetDensityCoefficientData(date)
+	data, err = db.GetDensityCoefficientData(date)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
@@ -172,25 +187,30 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	username := authorization.ReturnDomainUser()
-	db.RecalculateDensityCoefficient(date, username)
+	err = db.RecalculateDensityCoefficient(date, username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 
-// GetImbalanceDetails
+// GetImbalanceHistory
 // @Tags Calculations
 // @Accept json
 // @Produce json
 // @Param date query string true "Дата получения параметров"
-// @Success 200 {object} models.GetImbalanceDetails
-// @Router /api/GetImbalanceDetails [get]
-func GetImbalanceDetails(c *gin.Context) {
-	var data []models.GetImbalanceDetails
+// @Success 200 {object} []models.ImbalanceCalculationHistory
+// @Router /api/GetImbalanceHistory [get]
+func GetImbalanceHistory(c *gin.Context) {
+	var data []models.ImbalanceCalculationHistory
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
 
@@ -205,24 +225,61 @@ func GetImbalanceDetails(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data = db.GetImbalanceData(date)
+	data, err = db.GetImbalanceHistory(date)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
 
-// RecalculateImbalance
+// GetCalculatedImbalanceDetails
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Param batch query string true "Id batch расчета"
+// @Success 200 {object} models.GetCalculatedImbalanceDetails
+// @Router /api/GetCalculatedImbalanceDetails [get]
+func GetCalculatedImbalanceDetails(c *gin.Context) {
+	var data models.GetCalculatedImbalanceDetails
+	batch := c.Query("batch")
+	permissions := []string{conf.GlobalConfig.Permissions.Show}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := connectToDatabase()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	data, err = db.GetCalculatedImbalanceDetails(batch)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	db.Close()
+	c.JSON(http.StatusOK, data)
+}
+
+// CalculateImbalance
 // @Tags Calculations
 // @Accept json
 // @Produce json
 // @Param date query string true "Дата получения параметров"
-// @Param data body []models.SetImbalanceFlagAndAdjustment true "Данные расчета небаланс"
+// @Param data body []models.SetImbalanceFlag true "Данные расчета небаланс"
 // @Success 200
-// @Router /api/RecalculateImbalance [post]
-func RecalculateImbalance(c *gin.Context) {
+// @Router /api/CalculateImbalance [post]
+func CalculateImbalance(c *gin.Context) {
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
@@ -243,14 +300,93 @@ func RecalculateImbalance(c *gin.Context) {
 
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	username := authorization.ReturnDomainUser()
-	db.RecalculateImbalance(date, username, string(jsonData))
+	err = db.CalculateImbalance(date, username, string(jsonData))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
+}
+
+// SetAdjustment
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Param date query string true "Дата получения параметров"
+// @Param data body []models.SetAdjustment true "Данные корректировки"
+// @Success 200
+// @Router /api/SetAdjustment [post]
+func SetAdjustment(c *gin.Context) {
+	date := c.Query("date")
+	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
+
+	isValid, _ := isValidDate(c, date)
+	if !isValid {
+		return
+	}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := connectToDatabase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	jsonData, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = db.SetAdjustment(date, string(jsonData))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	db.Close()
+	c.JSON(http.StatusOK, "Calculation succsessful")
+}
+
+// GetNodesList
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Param batch query string false "Id batch расчета"
+// @Success 200 {object} models.NodeList
+// @Router /api/GetNodesList [get]
+func GetNodesList(c *gin.Context) {
+	batch := c.Query("batch")
+	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := connectToDatabase()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	data, err := db.GetNodesList(batch)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	db.Close()
+	c.JSON(http.StatusOK, data)
 }
 
 // GetCalculationsList
@@ -268,11 +404,16 @@ func GetCalculationsList(c *gin.Context) {
 
 	db, err := connectToDatabase()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data := db.GetCalculationsList()
+	data, err := db.GetCalculationsList()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	db.Close()
 	c.JSON(http.StatusOK, data)
 }
