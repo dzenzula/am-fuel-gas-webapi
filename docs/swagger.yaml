@@ -84,6 +84,8 @@ definitions:
         type: string
       autoTotal:
         type: string
+      calculationDate:
+        type: string
       grp10Manual:
         type: string
       id:

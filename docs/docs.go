@@ -562,6 +562,9 @@ const docTemplate = `{
                 "autoTotal": {
                     "type": "string"
                 },
+                "calculationDate": {
+                    "type": "string"
+                },
                 "grp10Manual": {
                     "type": "string"
                 },

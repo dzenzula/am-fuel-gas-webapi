@@ -57,18 +57,19 @@ type GetCalculatedImbalanceDetails struct {
 }
 
 type ImbalanceCalculation struct {
-	Id             string  `gorm:"column:calc_batch"`
-	Nitka1Manual   *string `gorm:"column:nitka1_manual"`
-	Nitka2Manual   *string `gorm:"column:nitka2_manual"`
-	Nitka3Manual   *string `gorm:"column:nitka3_manual"`
-	Grp10Manual    *string `gorm:"column:grp10_manual"`
-	Nitka1Auto     *string `gorm:"column:nitka1_auto"`
-	Nitka2Auto     *string `gorm:"column:nitka2_auto"`
-	Nitka3Auto     *string `gorm:"column:nitka3_auto"`
-	ManualTotal    *string `gorm:"column:manual_total"`
-	AutoTotal      *string `gorm:"column:auto_total"`
-	AggregateTotal *string `gorm:"column:aggregate_total"`
-	PgRedisTotal   *string `gorm:"column:pg_redis_total"`
+	Id                string     `gorm:"column:calc_batch"`
+	CalculationDate   *time.Time `gorm:"column:calculation_date"`
+	Nitka1Manual      *string    `gorm:"column:nitka1_manual"`
+	Nitka2Manual      *string    `gorm:"column:nitka2_manual"`
+	Nitka3Manual      *string    `gorm:"column:nitka3_manual"`
+	Grp10Manual       *string    `gorm:"column:grp10_manual"`
+	Nitka1Auto        *string    `gorm:"column:nitka1_auto"`
+	Nitka2Auto        *string    `gorm:"column:nitka2_auto"`
+	Nitka3Auto        *string    `gorm:"column:nitka3_auto"`
+	ManualTotal       *string    `gorm:"column:manual_total"`
+	AutoTotal         *string    `gorm:"column:auto_total"`
+	AggregateTotal    *string    `gorm:"column:aggregate_total"`
+	PgRedisTotal      *string    `gorm:"column:pg_redis_total"`
 }
 
 type Node struct {
