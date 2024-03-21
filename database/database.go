@@ -75,7 +75,7 @@ func (dbc *DBConnection) GetData(date time.Time, tag string) ([]models.GetManual
 	var gas []models.GetManualFuelGas
 	dateStart := date.Format(layout)
 
-	queryGetData := `SELECT * FROM "analytics-time-group".get_last_manual_data(?)`
+	queryGetData := `SELECT * FROM "analytics-time-group".get_last_manual_data(?, ?)`
 	ans := dbc.db.Raw(queryGetData, dateStart, tag).Scan(&gas)
 	if ans.Error != nil {
 		return nil, ans.Error

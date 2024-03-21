@@ -18,6 +18,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param date query string true "Дата получения параметров"
+// @Param tag query string false "Тэг типы: 'day', 'month' or null"
 // @Success 200 {object} models.GetManualFuelGas
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
