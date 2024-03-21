@@ -71,12 +71,12 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 	return nil
 }
 
-func (dbc *DBConnection) GetData(date time.Time) ([]models.GetManualFuelGas, error) {
+func (dbc *DBConnection) GetData(date time.Time, tag string) ([]models.GetManualFuelGas, error) {
 	var gas []models.GetManualFuelGas
 	dateStart := date.Format(layout)
 
-	queryGetData := `SELECT * FROM "analytics-time-group".get_last_manual_data(?)`
-	ans := dbc.db.Raw(queryGetData, dateStart).Scan(&gas)
+	queryGetData := `SELECT * FROM "analytics-time-group".get_last_manual_data(?, ?)`
+	ans := dbc.db.Raw(queryGetData, dateStart, tag).Scan(&gas)
 	if ans.Error != nil {
 		return nil, ans.Error
 	}
