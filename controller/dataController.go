@@ -22,6 +22,7 @@ import (
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
 	date := c.Query("date")
+	tag := c.Query("tag")
 
 	isValid, truncatedTime := isValidDate(c, date)
 	if !isValid {
@@ -39,7 +40,7 @@ func GetParameters(c *gin.Context) {
 		return
 	}
 
-	gas, err := db.GetData(truncatedTime)
+	gas, err := db.GetData(truncatedTime, tag)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
