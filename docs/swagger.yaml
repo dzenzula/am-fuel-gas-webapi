@@ -400,6 +400,10 @@ paths:
         name: date
         required: true
         type: string
+      - description: 'Тэг типы: ''day'', ''month'' or empty'
+        in: query
+        name: tag
+        type: string
       produces:
       - application/json
       responses:

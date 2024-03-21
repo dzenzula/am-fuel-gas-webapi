@@ -324,6 +324,12 @@ const docTemplate = `{
                         "name": "date",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Тэг типы: 'day', 'month' or empty",
+                        "name": "tag",
+                        "in": "query"
                     }
                 ],
                 "responses": {
