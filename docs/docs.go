@@ -255,7 +255,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Id batch расчета",
-                        "name": "batch",
+                        "name": "cloneId",
                         "in": "query"
                     }
                 ],

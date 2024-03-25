@@ -355,7 +355,7 @@ paths:
       parameters:
       - description: Id batch расчета
         in: query
-        name: batch
+        name: cloneId
         type: string
       produces:
       - application/json

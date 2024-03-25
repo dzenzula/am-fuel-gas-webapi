@@ -364,11 +364,11 @@ func SetAdjustment(c *gin.Context) {
 // @Tags Calculations
 // @Accept json
 // @Produce json
-// @Param batch query string false "Id batch расчета"
+// @Param cloneId query string false "Id batch расчета"
 // @Success 200 {object} models.NodeList
 // @Router /api/GetNodesList [get]
 func GetNodesList(c *gin.Context) {
-	batch := c.Query("batch")
+	batch := c.Query("cloneId")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
 	if !checkPermissions(c, permissions) {
