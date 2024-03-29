@@ -161,17 +161,10 @@ definitions:
       id:
         type: integer
     type: object
-  models.SetAdjustment:
-    properties:
-      batch:
-        type: string
-      id:
-        type: integer
-      value:
-        type: string
-    type: object
   models.SetImbalanceFlag:
     properties:
+      adjustment:
+        type: string
       flag:
         type: string
       id:
@@ -261,6 +254,11 @@ paths:
         name: date
         required: true
         type: string
+      - description: Id batch расчета
+        in: query
+        name: batch
+        required: true
+        type: string
       - description: Данные расчета небаланс
         in: body
         name: data
@@ -269,6 +267,28 @@ paths:
           items:
             $ref: '#/definitions/models.SetImbalanceFlag'
           type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      tags:
+      - Calculations
+  /api/CancelImbalanceCalculation:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Дата получения параметров
+        in: query
+        name: date
+        required: true
+        type: string
+      - description: Id batch расчета
+        in: query
+        name: batch
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -413,6 +433,25 @@ paths:
             $ref: '#/definitions/models.GetManualFuelGas'
       tags:
       - Parameters
+  /api/PrepareImbalanceCalculation:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Дата расчета
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - Calculations
   /api/RecalculateDensityCoefficient:
     post:
       consumes:
@@ -423,31 +462,6 @@ paths:
         name: date
         required: true
         type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      tags:
-      - Calculations
-  /api/SetAdjustment:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Дата получения параметров
-        in: query
-        name: date
-        required: true
-        type: string
-      - description: Данные корректировки
-        in: body
-        name: data
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.SetAdjustment'
-          type: array
       produces:
       - application/json
       responses:

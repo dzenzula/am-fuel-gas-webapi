@@ -107,6 +107,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "Id batch расчета",
+                        "name": "batch",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "description": "Данные расчета небаланс",
                         "name": "data",
                         "in": "body",
@@ -117,6 +124,40 @@ const docTemplate = `{
                                 "$ref": "#/definitions/models.SetImbalanceFlag"
                             }
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/CancelImbalanceCalculation": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Id batch расчета",
+                        "name": "batch",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -342,6 +383,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/PrepareImbalanceCalculation": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата расчета",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/RecalculateDensityCoefficient": {
             "post": {
                 "consumes": [
@@ -360,45 +431,6 @@ const docTemplate = `{
                         "name": "date",
                         "in": "query",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/api/SetAdjustment": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Calculations"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Дата получения параметров",
-                        "name": "date",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Данные корректировки",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.SetAdjustment"
-                            }
-                        }
                     }
                 ],
                 "responses": {
@@ -686,23 +718,12 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SetAdjustment": {
-            "type": "object",
-            "properties": {
-                "batch": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
         "models.SetImbalanceFlag": {
             "type": "object",
             "properties": {
+                "adjustment": {
+                    "type": "string"
+                },
                 "flag": {
                     "type": "string"
                 },
