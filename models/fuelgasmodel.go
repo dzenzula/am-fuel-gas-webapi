@@ -27,7 +27,7 @@ type SetManualFuelGas struct {
 }
 
 type GetDensityCoefficient struct {
-	DensityCoefficient *float64 `gorm:"column:value"`
+	DensityCoefficient *float64
 	CalculationHistory []DensityCalculationHistory
 }
 

@@ -112,8 +112,8 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) (models.GetDensi
 								AND "timestamp" >= ? AND "timestamp" < ?::timestamptz + INTERVAL '1 DAY'
 								ORDER BY id DESC
 								LIMIT 1`*/
-	queryGetLastCoefficient := `SELECT * FROM "raw-data".get_day_last_value_by_id_measuring_date(?, ?, 14);`
-	cflans := dbc.db.Raw(queryGetLastCoefficient, DensityCoefId, date).Scan(&res.DensityCoefficient)
+	queryGetLastCoefficient := `SELECT * FROM "raw-data".get_day_last_value_by_id_measuring_date(?, ?, ?);`
+	cflans := dbc.db.Raw(queryGetLastCoefficient, 1703751302145, date, 14).Scan(&res.DensityCoefficient)
 	if cflans.Error != nil {
 		return res, cflans.Error
 	}
