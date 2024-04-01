@@ -420,13 +420,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Дата получения параметров",
-                        "name": "date",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
                         "description": "Id batch расчета",
                         "name": "batch",
                         "in": "query",

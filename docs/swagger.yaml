@@ -454,11 +454,6 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Дата получения параметров
-        in: query
-        name: date
-        required: true
-        type: string
       - description: Id batch расчета
         in: query
         name: batch
