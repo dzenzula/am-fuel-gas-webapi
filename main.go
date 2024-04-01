@@ -82,17 +82,20 @@ func startGin() {
 	apiGroup := r.Group("/api")
 	apiGroup.Use(authorization.AuthRequired)
 	{
+		apiGroup.GET("/GetCalculationsList", controller.GetCalculationsList)
+
 		apiGroup.GET("/GetParameters", controller.GetParameters)
 		apiGroup.GET("/GetParameterHistory", controller.GetParameterHistory)
 		apiGroup.POST("/SetParameters", controller.SetParameters)
+		
 		apiGroup.GET("/GetDensityCoefficientDetails", controller.GetDensityCoefficientDetails)
 		apiGroup.POST("/RecalculateDensityCoefficient", controller.RecalculateDensityCoefficient)
+		
 		apiGroup.GET("/GetImbalanceHistory", controller.GetImbalanceHistory)
 		apiGroup.GET("/GetCalculatedImbalanceDetails", controller.GetCalculatedImbalanceDetails)
 		apiGroup.POST("/PrepareImbalanceCalculation", controller.PrepareImbalanceCalculation)
 		apiGroup.POST("/CalculateImbalance", controller.CalculateImbalance)
 		apiGroup.POST("/CancelImbalanceCalculation", controller.CancelImbalanceCalculation)
-		apiGroup.GET("/GetCalculationsList", controller.GetCalculationsList)
 		apiGroup.GET("/GetNodesList", controller.GetNodesList)
 	}
 

@@ -70,6 +70,7 @@ type ImbalanceCalculation struct {
 	AutoTotal       *string    `gorm:"column:auto_total"`
 	AggregateTotal  *string    `gorm:"column:aggregate_total"`
 	PgRedisTotal    *string    `gorm:"column:pg_redis_total"`
+	UserName        *string    `gorm:"column:username"`
 }
 
 type Node struct {
