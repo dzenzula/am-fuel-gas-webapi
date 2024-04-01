@@ -356,15 +356,15 @@ func CalculateImbalance(c *gin.Context) {
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 
-// CancelImbalanceCalculation
+// RemoveImbalanceCalculation
 // @Tags Calculations
 // @Accept json
 // @Produce json
 // @Param date query string true "Дата получения параметров"
 // @Param batch query string true "Id batch расчета"
 // @Success 200
-// @Router /api/CancelImbalanceCalculation [post]
-func CancelImbalanceCalculation(c *gin.Context) {
+// @Router /api/RemoveImbalanceCalculation [post]
+func RemoveImbalanceCalculation(c *gin.Context) {
 	date := c.Query("date")
 	batch := c.Query("batch")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
@@ -385,7 +385,7 @@ func CancelImbalanceCalculation(c *gin.Context) {
 	}
 
 	username := authorization.ReturnDomainUser()
-	err = db.CancelImbalanceCalculation(date, username, batch)
+	err = db.RemoveImbalanceCalculation( username, batch)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return

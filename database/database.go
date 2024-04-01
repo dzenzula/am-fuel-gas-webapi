@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	c "main/configuration"
 	"main/models"
 	"strconv"
@@ -16,8 +17,6 @@ import (
 type DBConnection struct {
 	db *gorm.DB
 }
-
-type CalculationIds int
 
 const (
 	DensityCoefId int    = 1707482375047
@@ -195,9 +194,9 @@ func (dbc *DBConnection) CalculateImbalance(date string, username string, setDat
 	return nil
 }
 
-func (dbc *DBConnection) CancelImbalanceCalculation(date string, username string, batch string) error {
-	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?, ?, ?)`
-	cans := dbc.db.Exec(queryCancel, date, username, batch)
+func (dbc *DBConnection) RemoveImbalanceCalculation(username string, batch string) error {
+	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?, ?)`
+	cans := dbc.db.Exec(queryCancel, username, batch)
 	if cans.Error != nil {
 		return cans.Error
 	}
@@ -232,6 +231,19 @@ func (dbc *DBConnection) GetCalculationsList() ([]models.CalculationList, error)
 	}
 
 	return res, nil
+}
+
+func (dbc *DBConnection) Ping() error {
+	sqldb, _ := dbc.db.DB()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Ping database
+	if err := sqldb.PingContext(ctx); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (dbc *DBConnection) Close() {
