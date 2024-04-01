@@ -133,40 +133,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/CancelImbalanceCalculation": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Calculations"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Дата получения параметров",
-                        "name": "date",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Id batch расчета",
-                        "name": "batch",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
         "/api/GetCalculatedImbalanceDetails": {
             "get": {
                 "consumes": [
@@ -440,6 +406,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/RemoveImbalanceCalculation": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Calculations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата получения параметров",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Id batch расчета",
+                        "name": "batch",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/SetParameters": {
             "post": {
                 "consumes": [
@@ -631,6 +631,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "pgRedisTotal": {
+                    "type": "string"
+                },
+                "userName": {
                     "type": "string"
                 }
             }
