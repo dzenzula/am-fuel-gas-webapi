@@ -106,11 +106,11 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) (models.GetDensi
 		return res, cfans.Error
 	}
 
-	/*queryGetLastCoefficient := `SELECT value FROM "raw-data".data 
-								WHERE id_measuring = 1703751302145 
-								AND "timestamp" >= ? AND "timestamp" < ?::timestamptz + INTERVAL '1 DAY'
-								ORDER BY id DESC
-								LIMIT 1`*/
+	/*queryGetLastCoefficient := `SELECT value FROM "raw-data".data
+	WHERE id_measuring = 1703751302145
+	AND "timestamp" >= ? AND "timestamp" < ?::timestamptz + INTERVAL '1 DAY'
+	ORDER BY id DESC
+	LIMIT 1`*/
 	queryGetLastCoefficient := `SELECT * FROM "raw-data".get_day_last_value_by_id_measuring_date(?, ?, ?);`
 	cflans := dbc.db.Raw(queryGetLastCoefficient, 1703751302145, date, 14).Scan(&res.DensityCoefficient)
 	if cflans.Error != nil {
@@ -169,8 +169,8 @@ func (dbc *DBConnection) GetCalculatedImbalanceDetails(batch string) (models.Get
 func (dbc *DBConnection) PrepareImbalanceCalculation(date string, username string) (string, error) {
 	var res string
 
-	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?, ?)`
-	cans := dbc.db.Exec(queryCancel, date, username)
+	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?)`
+	cans := dbc.db.Exec(queryCancel, username)
 	if cans.Error != nil {
 		return "", cans.Error
 	}

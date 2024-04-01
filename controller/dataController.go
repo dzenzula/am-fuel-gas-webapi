@@ -35,7 +35,7 @@ func GetParameters(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -73,7 +73,7 @@ func GetParameterHistory(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -115,7 +115,7 @@ func SetParameters(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -151,7 +151,7 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -187,7 +187,7 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -225,7 +225,7 @@ func GetImbalanceHistory(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -257,7 +257,7 @@ func GetCalculatedImbalanceDetails(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -293,7 +293,7 @@ func PrepareImbalanceCalculation(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -333,7 +333,7 @@ func CalculateImbalance(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -371,7 +371,7 @@ func RemoveImbalanceCalculation(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -403,7 +403,7 @@ func GetNodesList(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -432,7 +432,7 @@ func GetCalculationsList(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -473,12 +473,4 @@ func checkPermissions(c *gin.Context, permissions []string) bool {
 		return false
 	}
 	return true
-}
-
-func connectToDatabase() (*database.DBConnection, error) {
-	db, err := database.ConnectToPostgresDataBase()
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
 }
