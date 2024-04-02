@@ -35,7 +35,7 @@ func GetParameters(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -73,7 +73,7 @@ func GetParameterHistory(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -115,7 +115,7 @@ func SetParameters(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -151,7 +151,7 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -187,7 +187,7 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -225,7 +225,7 @@ func GetImbalanceHistory(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -257,7 +257,7 @@ func GetCalculatedImbalanceDetails(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -273,15 +273,14 @@ func GetCalculatedImbalanceDetails(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
-// CalculateImbalance
+// PrepareImbalanceCalculation
 // @Tags Calculations
 // @Accept json
 // @Produce json
-// @Param date query string true "Дата получения параметров"
-// @Param data body []models.SetImbalanceFlag true "Данные расчета небаланс"
-// @Success 200
-// @Router /api/CalculateImbalance [post]
-func CalculateImbalance(c *gin.Context) {
+// @Param date query string true "Дата расчета"
+// @Success 200 {object} string
+// @Router /api/PrepareImbalanceCalculation [post]
+func PrepareImbalanceCalculation(c *gin.Context) {
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
@@ -294,7 +293,47 @@ func CalculateImbalance(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	username := authorization.ReturnDomainUser()
+	batch, err := db.PrepareImbalanceCalculation(date, username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	db.Close()
+	c.JSON(http.StatusOK, batch)
+}
+
+// CalculateImbalance
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Param date query string true "Дата получения параметров"
+// @Param batch query string true "Id batch расчета"
+// @Param data body []models.SetImbalanceFlag true "Данные расчета небаланс"
+// @Success 200
+// @Router /api/CalculateImbalance [post]
+func CalculateImbalance(c *gin.Context) {
+	date := c.Query("date")
+	batch := c.Query("batch")
+	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
+
+	isValid, _ := isValidDate(c, date)
+	if !isValid {
+		return
+	}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -307,7 +346,7 @@ func CalculateImbalance(c *gin.Context) {
 	}
 
 	username := authorization.ReturnDomainUser()
-	err = db.CalculateImbalance(date, username, string(jsonData))
+	err = db.CalculateImbalance(date, username, string(jsonData), batch)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -317,57 +356,14 @@ func CalculateImbalance(c *gin.Context) {
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 
-// SetAdjustment
+// RemoveImbalanceCalculation
 // @Tags Calculations
 // @Accept json
 // @Produce json
-// @Param date query string true "Дата получения параметров"
-// @Param data body []models.SetAdjustment true "Данные корректировки"
+// @Param batch query string true "Id batch расчета"
 // @Success 200
-// @Router /api/SetAdjustment [post]
-func SetAdjustment(c *gin.Context) {
-	date := c.Query("date")
-	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
-
-	isValid, _ := isValidDate(c, date)
-	if !isValid {
-		return
-	}
-
-	if !checkPermissions(c, permissions) {
-		return
-	}
-
-	db, err := connectToDatabase()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	jsonData, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	err = db.SetAdjustment(date, string(jsonData))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	db.Close()
-	c.JSON(http.StatusOK, "Calculation succsessful")
-}
-
-// GetNodesList
-// @Tags Calculations
-// @Accept json
-// @Produce json
-// @Param batch query string false "Id batch расчета"
-// @Success 200 {object} models.NodeList
-// @Router /api/GetNodesList [get]
-func GetNodesList(c *gin.Context) {
+// @Router /api/RemoveImbalanceCalculation [post]
+func RemoveImbalanceCalculation(c *gin.Context) {
 	batch := c.Query("batch")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
@@ -375,7 +371,39 @@ func GetNodesList(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	username := authorization.ReturnDomainUser()
+	err = db.RemoveImbalanceCalculation(username, batch)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	db.Close()
+	c.JSON(http.StatusOK, "Success")
+}
+
+// GetNodesList
+// @Tags Calculations
+// @Accept json
+// @Produce json
+// @Param cloneId query string false "Id batch расчета"
+// @Success 200 {object} models.NodeList
+// @Router /api/GetNodesList [get]
+func GetNodesList(c *gin.Context) {
+	batch := c.Query("cloneId")
+	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -404,7 +432,7 @@ func GetCalculationsList(c *gin.Context) {
 		return
 	}
 
-	db, err := connectToDatabase()
+	db, err := database.ConnectToPostgresDataBase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -445,12 +473,4 @@ func checkPermissions(c *gin.Context, permissions []string) bool {
 		return false
 	}
 	return true
-}
-
-func connectToDatabase() (*database.DBConnection, error) {
-	db, err := database.ConnectToPostgresDataBase()
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
 }

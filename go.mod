@@ -3,9 +3,9 @@ module main
 go 1.20
 
 require (
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.6.0
 	github.com/swaggo/gin-swagger v1.6.0
-	gorm.io/gorm v1.25.5
+	gorm.io/gorm v1.25.8
 	krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization v0.0.0
 )
 

@@ -106,6 +106,8 @@ definitions:
         type: string
       pgRedisTotal:
         type: string
+      userName:
+        type: string
     type: object
   models.ImbalanceCalculationHistory:
     properties:
@@ -161,17 +163,10 @@ definitions:
       id:
         type: integer
     type: object
-  models.SetAdjustment:
-    properties:
-      batch:
-        type: string
-      id:
-        type: integer
-      value:
-        type: string
-    type: object
   models.SetImbalanceFlag:
     properties:
+      adjustment:
+        type: string
       flag:
         type: string
       id:
@@ -259,6 +254,11 @@ paths:
       - description: Дата получения параметров
         in: query
         name: date
+        required: true
+        type: string
+      - description: Id batch расчета
+        in: query
+        name: batch
         required: true
         type: string
       - description: Данные расчета небаланс
@@ -355,7 +355,7 @@ paths:
       parameters:
       - description: Id batch расчета
         in: query
-        name: batch
+        name: cloneId
         type: string
       produces:
       - application/json
@@ -413,6 +413,25 @@ paths:
             $ref: '#/definitions/models.GetManualFuelGas'
       tags:
       - Parameters
+  /api/PrepareImbalanceCalculation:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Дата расчета
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - Calculations
   /api/RecalculateDensityCoefficient:
     post:
       consumes:
@@ -430,24 +449,16 @@ paths:
           description: OK
       tags:
       - Calculations
-  /api/SetAdjustment:
+  /api/RemoveImbalanceCalculation:
     post:
       consumes:
       - application/json
       parameters:
-      - description: Дата получения параметров
+      - description: Id batch расчета
         in: query
-        name: date
+        name: batch
         required: true
         type: string
-      - description: Данные корректировки
-        in: body
-        name: data
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.SetAdjustment'
-          type: array
       produces:
       - application/json
       responses:

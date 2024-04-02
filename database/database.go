@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	c "main/configuration"
 	"main/models"
 	"strconv"
@@ -16,8 +17,6 @@ import (
 type DBConnection struct {
 	db *gorm.DB
 }
-
-type CalculationIds int
 
 const (
 	DensityCoefId int    = 1707482375047
@@ -107,12 +106,13 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) (models.GetDensi
 		return res, cfans.Error
 	}
 
-	queryGetLastCoefficient := `SELECT value FROM "raw-data".data 
-								WHERE id_measuring = 1703751302145 
-								AND "timestamp" >= ? AND "timestamp" < ?::timestamptz + INTERVAL '1 DAY'
-								ORDER BY id DESC
-								LIMIT 1`
-	cflans := dbc.db.Raw(queryGetLastCoefficient, date, date).Scan(&res.DensityCoefficient)
+	/*queryGetLastCoefficient := `SELECT value FROM "raw-data".data
+	WHERE id_measuring = 1703751302145
+	AND "timestamp" >= ? AND "timestamp" < ?::timestamptz + INTERVAL '1 DAY'
+	ORDER BY id DESC
+	LIMIT 1`*/
+	queryGetLastCoefficient := `SELECT * FROM "raw-data".get_day_last_value_by_id_measuring_date(?, ?, ?);`
+	cflans := dbc.db.Raw(queryGetLastCoefficient, 1703751302145, date, 14).Scan(&res.DensityCoefficient)
 	if cflans.Error != nil {
 		return res, cflans.Error
 	}
@@ -166,9 +166,27 @@ func (dbc *DBConnection) GetCalculatedImbalanceDetails(batch string) (models.Get
 	return res, nil
 }
 
-func (dbc *DBConnection) CalculateImbalance(date string, username string, setData string) error {
-	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?, ?)`
-	ans := dbc.db.Exec(queryRecalculate, date, username, ImbalanceId, setData)
+func (dbc *DBConnection) PrepareImbalanceCalculation(date string, username string) (string, error) {
+	var res string
+
+	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?)`
+	cans := dbc.db.Exec(queryCancel, username)
+	if cans.Error != nil {
+		return "", cans.Error
+	}
+
+	queryCreateCalc := `CALL "analytics-time-group".ins_day_natural_gas_empty_imbalance(?, ?);`
+	ans := dbc.db.Raw(queryCreateCalc, date, username).Scan(&res)
+	if ans.Error != nil {
+		return "", ans.Error
+	}
+
+	return res, nil
+}
+
+func (dbc *DBConnection) CalculateImbalance(date string, username string, setData string, batch string) error {
+	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_imbalance_main(?, ?, ?, ?)`
+	ans := dbc.db.Exec(queryRecalculate, date, username, setData, batch)
 	if ans.Error != nil {
 		return ans.Error
 	}
@@ -176,11 +194,11 @@ func (dbc *DBConnection) CalculateImbalance(date string, username string, setDat
 	return nil
 }
 
-func (dbc *DBConnection) SetAdjustment(date string, setData string) error {
-	queryAdjustment := `CALL "analytics-time-group".set_update_imbalance_calculation_adjustment(?, ?)`
-	ans := dbc.db.Exec(queryAdjustment, date, setData)
-	if ans.Error != nil {
-		return ans.Error
+func (dbc *DBConnection) RemoveImbalanceCalculation(username string, batch string) error {
+	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?, ?)`
+	cans := dbc.db.Exec(queryCancel, username, batch)
+	if cans.Error != nil {
+		return cans.Error
 	}
 
 	return nil
@@ -213,6 +231,19 @@ func (dbc *DBConnection) GetCalculationsList() ([]models.CalculationList, error)
 	}
 
 	return res, nil
+}
+
+func (dbc *DBConnection) Ping() error {
+	sqldb, _ := dbc.db.DB()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Ping database
+	if err := sqldb.PingContext(ctx); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (dbc *DBConnection) Close() {
