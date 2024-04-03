@@ -1,7 +1,6 @@
 package database
 
 import (
-	"context"
 	c "main/configuration"
 	"main/models"
 	"strconv"
@@ -18,13 +17,15 @@ type DBConnection struct {
 	db *gorm.DB
 }
 
+var dbConnection DBConnection
+
 const (
 	DensityCoefId int    = 1707482375047
 	ImbalanceId   int    = 1707482385203
 	layout        string = "2006-01-02"
 )
 
-func ConnectToPostgresDataBase() (*DBConnection, error) {
+/*func ConnectToPostgresDataBase() (*DBConnection, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
 		c.GlobalConfig.ConStringPgDb.Host,
 		c.GlobalConfig.ConStringPgDb.User,
@@ -39,10 +40,39 @@ func ConnectToPostgresDataBase() (*DBConnection, error) {
 		return nil, err
 	}
 
+	dbConnection.db = db
+
 	return &DBConnection{db}, nil
+}*/
+
+func ConnectToPostgresDataBase() error {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
+		c.GlobalConfig.ConStringPgDb.Host,
+		c.GlobalConfig.ConStringPgDb.User,
+		c.GlobalConfig.ConStringPgDb.Password,
+		c.GlobalConfig.ConStringPgDb.DBName,
+		c.GlobalConfig.ConStringPgDb.Port,
+		c.GlobalConfig.ConStringPgDb.SSLMode,
+	)
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return err
+	}
+
+	dbConnection.db = db
+
+	return nil
 }
 
-func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
+func InsertParametrs(d models.SetManualFuelGas) error {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return cerr
+		}
+	}
+
 	var queryInsert string = `INSERT INTO "raw-data".data(id_measuring, "timestamp", value, batch_id, quality) VALUES (?, ?, ?, ?, ?)`
 	var guid string
 	parsedDate, errTime := time.Parse(layout, d.Date)
@@ -63,19 +93,26 @@ func (dbc *DBConnection) InsertParametrs(d models.SetManualFuelGas) error {
 	}
 
 	timestamp := parsedDate.Format("2006-01-02 15:04:05.999")
-	res := dbc.db.Exec(queryInsert, strconv.Itoa(d.Id), timestamp, fmt.Sprintf("%f", d.Value), guid, strconv.Itoa(192))
+	res := dbConnection.db.Exec(queryInsert, strconv.Itoa(d.Id), timestamp, fmt.Sprintf("%f", d.Value), guid, strconv.Itoa(192))
 	if res.Error != nil {
 		return res.Error
 	}
 	return nil
 }
 
-func (dbc *DBConnection) GetData(date time.Time, tag string) ([]models.GetManualFuelGas, error) {
+func GetData(date time.Time, tag string) ([]models.GetManualFuelGas, error) {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return nil, cerr
+		}
+	}
+
 	var gas []models.GetManualFuelGas
 	dateStart := date.Format(layout)
 
 	queryGetData := `SELECT * FROM "analytics-time-group".get_last_manual_data(?, ?)`
-	ans := dbc.db.Raw(queryGetData, dateStart, tag).Scan(&gas)
+	ans := dbConnection.db.Raw(queryGetData, dateStart, tag).Scan(&gas)
 	if ans.Error != nil {
 		return nil, ans.Error
 	}
@@ -83,12 +120,19 @@ func (dbc *DBConnection) GetData(date time.Time, tag string) ([]models.GetManual
 	return gas, nil
 }
 
-func (dbc *DBConnection) GetDataHistory(date time.Time, id string) ([]models.UpdateHistory, error) {
+func GetDataHistory(date time.Time, id string) ([]models.UpdateHistory, error) {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return nil, cerr
+		}
+	}
+
 	var history []models.UpdateHistory
 	dateStart := date.Format(layout)
 
 	queryGetHistory := `SELECT * FROM "analytics-time-group".get_manual_data_history(?,?)`
-	ans := dbc.db.Raw(queryGetHistory, dateStart, id).Scan(&history)
+	ans := dbConnection.db.Raw(queryGetHistory, dateStart, id).Scan(&history)
 	if ans.Error != nil {
 		return nil, ans.Error
 	}
@@ -96,12 +140,19 @@ func (dbc *DBConnection) GetDataHistory(date time.Time, id string) ([]models.Upd
 	return history, nil
 }
 
-func (dbc *DBConnection) GetDensityCoefficientData(date string) (models.GetDensityCoefficient, error) {
+func GetDensityCoefficientData(date string) (models.GetDensityCoefficient, error) {
 	var res models.GetDensityCoefficient
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return res, cerr
+		}
+	}
+
 	var history []models.DensityCalculationHistory
 
 	queryGetDensityCoefficient := `SELECT * FROM "analytics-time-group".get_density_coefficient(?)`
-	cfans := dbc.db.Raw(queryGetDensityCoefficient, date).Scan(&history)
+	cfans := dbConnection.db.Raw(queryGetDensityCoefficient, date).Scan(&history)
 	if cfans.Error != nil {
 		return res, cfans.Error
 	}
@@ -112,7 +163,7 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) (models.GetDensi
 	ORDER BY id DESC
 	LIMIT 1`*/
 	queryGetLastCoefficient := `SELECT * FROM "raw-data".get_day_last_value_by_id_measuring_date(?, ?, ?);`
-	cflans := dbc.db.Raw(queryGetLastCoefficient, 1703751302145, date, 14).Scan(&res.DensityCoefficient)
+	cflans := dbConnection.db.Raw(queryGetLastCoefficient, 1703751302145, date, 14).Scan(&res.DensityCoefficient)
 	if cflans.Error != nil {
 		return res, cflans.Error
 	}
@@ -122,20 +173,34 @@ func (dbc *DBConnection) GetDensityCoefficientData(date string) (models.GetDensi
 	return res, nil
 }
 
-func (dbc *DBConnection) RecalculateDensityCoefficient(date string, username string) error {
+func RecalculateDensityCoefficient(date string, username string) error {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return cerr
+		}
+	}
+
 	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)`
-	ans := dbc.db.Exec(queryRecalculate, date, username, DensityCoefId)
+	ans := dbConnection.db.Exec(queryRecalculate, date, username, DensityCoefId)
 	if ans.Error != nil {
 		return ans.Error
 	}
 	return nil
 }
 
-func (dbc *DBConnection) GetImbalanceHistory(date string) ([]models.ImbalanceCalculationHistory, error) {
+func GetImbalanceHistory(date string) ([]models.ImbalanceCalculationHistory, error) {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return nil, cerr
+		}
+	}
+
 	var res []models.ImbalanceCalculationHistory
 
 	queryGetImbalanceHistory := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_history(?)`
-	ans := dbc.db.Raw(queryGetImbalanceHistory, date).Scan(&res)
+	ans := dbConnection.db.Raw(queryGetImbalanceHistory, date).Scan(&res)
 	if ans.Error != nil {
 		return nil, ans.Error
 	}
@@ -143,19 +208,26 @@ func (dbc *DBConnection) GetImbalanceHistory(date string) ([]models.ImbalanceCal
 	return res, nil
 }
 
-func (dbc *DBConnection) GetCalculatedImbalanceDetails(batch string) (models.GetCalculatedImbalanceDetails, error) {
+func GetCalculatedImbalanceDetails(batch string) (models.GetCalculatedImbalanceDetails, error) {
 	var res models.GetCalculatedImbalanceDetails
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return res, cerr
+		}
+	}
+
 	var data models.ImbalanceCalculation
 	var nodes []models.Node
 
 	queryGetImbalanceData := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_data(?)`
-	dans := dbc.db.Raw(queryGetImbalanceData, batch).Scan(&data)
+	dans := dbConnection.db.Raw(queryGetImbalanceData, batch).Scan(&data)
 	if dans.Error != nil {
 		return res, dans.Error
 	}
 
 	queryGetImbalanceNodes := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_data_nodes(?)`
-	nans := dbc.db.Raw(queryGetImbalanceNodes, batch).Scan(&nodes)
+	nans := dbConnection.db.Raw(queryGetImbalanceNodes, batch).Scan(&nodes)
 	if nans.Error != nil {
 		return res, nans.Error
 	}
@@ -166,17 +238,24 @@ func (dbc *DBConnection) GetCalculatedImbalanceDetails(batch string) (models.Get
 	return res, nil
 }
 
-func (dbc *DBConnection) PrepareImbalanceCalculation(date string, username string) (string, error) {
+func PrepareImbalanceCalculation(date string, username string) (string, error) {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return "", cerr
+		}
+	}
+
 	var res string
 
 	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?)`
-	cans := dbc.db.Exec(queryCancel, username)
+	cans := dbConnection.db.Exec(queryCancel, username)
 	if cans.Error != nil {
 		return "", cans.Error
 	}
 
 	queryCreateCalc := `CALL "analytics-time-group".ins_day_natural_gas_empty_imbalance(?, ?);`
-	ans := dbc.db.Raw(queryCreateCalc, date, username).Scan(&res)
+	ans := dbConnection.db.Raw(queryCreateCalc, date, username).Scan(&res)
 	if ans.Error != nil {
 		return "", ans.Error
 	}
@@ -184,9 +263,16 @@ func (dbc *DBConnection) PrepareImbalanceCalculation(date string, username strin
 	return res, nil
 }
 
-func (dbc *DBConnection) CalculateImbalance(date string, username string, setData string, batch string) error {
+func CalculateImbalance(date string, username string, setData string, batch string) error {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return cerr
+		}
+	}
+
 	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_imbalance_main(?, ?, ?, ?)`
-	ans := dbc.db.Exec(queryRecalculate, date, username, setData, batch)
+	ans := dbConnection.db.Exec(queryRecalculate, date, username, setData, batch)
 	if ans.Error != nil {
 		return ans.Error
 	}
@@ -194,9 +280,16 @@ func (dbc *DBConnection) CalculateImbalance(date string, username string, setDat
 	return nil
 }
 
-func (dbc *DBConnection) RemoveImbalanceCalculation(username string, batch string) error {
+func RemoveImbalanceCalculation(username string, batch string) error {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return cerr
+		}
+	}
+
 	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?, ?)`
-	cans := dbc.db.Exec(queryCancel, username, batch)
+	cans := dbConnection.db.Exec(queryCancel, username, batch)
 	if cans.Error != nil {
 		return cans.Error
 	}
@@ -204,16 +297,23 @@ func (dbc *DBConnection) RemoveImbalanceCalculation(username string, batch strin
 	return nil
 }
 
-func (dbc *DBConnection) GetNodesList(batch string) ([]models.NodeList, error) {
+func GetNodesList(batch string) ([]models.NodeList, error) {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return nil, cerr
+		}
+	}
+
 	var res []models.NodeList
 	var ans *gorm.DB
 
 	if batch != "" {
 		queryGetNodes := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_nodes_flag(?)`
-		ans = dbc.db.Raw(queryGetNodes, batch).Scan(&res)
+		ans = dbConnection.db.Raw(queryGetNodes, batch).Scan(&res)
 	} else {
 		queryGetNodes := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_nodes_flag()`
-		ans = dbc.db.Raw(queryGetNodes).Scan(&res)
+		ans = dbConnection.db.Raw(queryGetNodes).Scan(&res)
 	}
 	if ans.Error != nil {
 		return nil, ans.Error
@@ -222,32 +322,59 @@ func (dbc *DBConnection) GetNodesList(batch string) ([]models.NodeList, error) {
 	return res, nil
 }
 
-func (dbc *DBConnection) GetCalculationsList() ([]models.CalculationList, error) {
+func GetCalculationsList() ([]models.CalculationList, error) {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return nil, cerr
+		}
+	}
+
 	var res []models.CalculationList
 	arr := []int{DensityCoefId, ImbalanceId}
 	queryGetCalculationsList := `SELECT id, name, description FROM "raw-data".measurings WHERE id IN (?)`
-	if err := dbc.db.Raw(queryGetCalculationsList, arr).Scan(&res); err.Error != nil {
+	if err := dbConnection.db.Raw(queryGetCalculationsList, arr).Scan(&res); err.Error != nil {
 		return nil, err.Error
 	}
 
 	return res, nil
 }
 
-func (dbc *DBConnection) Ping() error {
-	sqldb, _ := dbc.db.DB()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+func GetScales() ([]models.GetScales, error) {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return nil, cerr
+		}
+	}
 
-	// Ping database
-	if err := sqldb.PingContext(ctx); err != nil {
-		return err
+	var res []models.GetScales
+	queryGetScales := `SELECT id_measuring, value, description FROM "raw-data".measuring_scales`
+	if db := dbConnection.db.Raw(queryGetScales).Scan(&res); db.Error != nil {
+		return nil, db.Error
+	}
+
+	return res, nil
+}
+
+func UpdateScale(scale models.UpdateScale) error {
+	sqldb, _ := dbConnection.db.DB()
+	if err := sqldb.Ping(); err != nil {
+		if cerr := ConnectToPostgresDataBase(); cerr != nil {
+			return cerr
+		}
+	}
+
+	queryUpdateScale := `UPDATE "raw-data".measuring_scales SET value=? WHERE id_measuring=?`
+	if err := dbConnection.db.Exec(queryUpdateScale, scale.Value, scale.Id); err.Error != nil {
+		return err.Error
 	}
 
 	return nil
 }
 
-func (dbc *DBConnection) Close() {
-	sqldb, _ := dbc.db.DB()
+func Close() {
+	sqldb, _ := dbConnection.db.DB()
 	sqldb.Close()
 }
 

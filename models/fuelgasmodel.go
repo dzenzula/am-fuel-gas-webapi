@@ -108,3 +108,14 @@ type CalculationList struct {
 	Name        string
 	Description string
 }
+
+type GetScales struct {
+	Id          int64  `gorm:"column:id_measuring"`
+	Value       string `gorm:"column:value"`
+	Description string `gorm:"column:description"`
+}
+
+type UpdateScale struct {
+	Id    int64
+	Value string
+}
