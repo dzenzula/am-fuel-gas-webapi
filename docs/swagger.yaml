@@ -78,6 +78,15 @@ definitions:
       value:
         type: number
     type: object
+  models.GetScales:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      value:
+        type: string
+    type: object
   models.ImbalanceCalculation:
     properties:
       aggregateTotal:
@@ -189,6 +198,13 @@ definitions:
         type: string
       value:
         type: number
+    type: object
+  models.UpdateScale:
+    properties:
+      id:
+        type: integer
+      value:
+        type: string
     type: object
   models.UserData:
     properties:
@@ -413,6 +429,19 @@ paths:
             $ref: '#/definitions/models.GetManualFuelGas'
       tags:
       - Parameters
+  /api/GetScales:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetScales'
+      tags:
+      - Parameters
   /api/PrepareImbalanceCalculation:
     post:
       consumes:
@@ -477,6 +506,24 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/models.SetManualFuelGas'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      tags:
+      - Parameters
+  /api/UpdateScale:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные шкалы
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateScale'
       produces:
       - application/json
       responses:

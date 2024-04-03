@@ -35,19 +35,12 @@ func GetParameters(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	gas, err := database.GetData(truncatedTime, tag)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	gas, err := db.GetData(truncatedTime, tag)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	db.Close()
 	c.JSON(http.StatusOK, gas)
 }
 
@@ -73,19 +66,12 @@ func GetParameterHistory(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	history, err := database.GetDataHistory(truncatedTime, idMeasuring)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	history, err := db.GetDataHistory(truncatedTime, idMeasuring)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	db.Close()
 	c.JSON(http.StatusOK, history)
 }
 
@@ -115,18 +101,11 @@ func SetParameters(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
-	if err != nil {
+	if err := database.InsertParametrs(data); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if err := db.InsertParametrs(data); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	db.Close()
 	c.JSON(http.StatusOK, "Insert successful")
 }
 
@@ -151,19 +130,12 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	data, err := database.GetDensityCoefficientData(date)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data, err = db.GetDensityCoefficientData(date)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	db.Close()
 	c.JSON(http.StatusOK, data)
 }
 
@@ -187,20 +159,13 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
 	username := authorization.ReturnDomainUser()
-	err = db.RecalculateDensityCoefficient(date, username)
+	err := database.RecalculateDensityCoefficient(date, username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 
@@ -225,19 +190,12 @@ func GetImbalanceHistory(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	data, err := database.GetImbalanceHistory(date)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data, err = db.GetImbalanceHistory(date)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	db.Close()
 	c.JSON(http.StatusOK, data)
 }
 
@@ -257,19 +215,12 @@ func GetCalculatedImbalanceDetails(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	data, err := database.GetCalculatedImbalanceDetails(batch)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data, err = db.GetCalculatedImbalanceDetails(batch)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	db.Close()
 	c.JSON(http.StatusOK, data)
 }
 
@@ -293,20 +244,13 @@ func PrepareImbalanceCalculation(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
 	username := authorization.ReturnDomainUser()
-	batch, err := db.PrepareImbalanceCalculation(date, username)
+	batch, err := database.PrepareImbalanceCalculation(date, username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	db.Close()
 	c.JSON(http.StatusOK, batch)
 }
 
@@ -333,12 +277,6 @@ func CalculateImbalance(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -346,13 +284,12 @@ func CalculateImbalance(c *gin.Context) {
 	}
 
 	username := authorization.ReturnDomainUser()
-	err = db.CalculateImbalance(date, username, string(jsonData), batch)
+	err = database.CalculateImbalance(date, username, string(jsonData), batch)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	db.Close()
 	c.JSON(http.StatusOK, "Calculation succsessful")
 }
 
@@ -371,20 +308,13 @@ func RemoveImbalanceCalculation(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
 	username := authorization.ReturnDomainUser()
-	err = db.RemoveImbalanceCalculation(username, batch)
+	err := database.RemoveImbalanceCalculation(username, batch)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	db.Close()
 	c.JSON(http.StatusOK, "Success")
 }
 
@@ -403,19 +333,12 @@ func GetNodesList(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	data, err := database.GetNodesList(batch)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data, err := db.GetNodesList(batch)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	db.Close()
 	c.JSON(http.StatusOK, data)
 }
 
@@ -432,20 +355,64 @@ func GetCalculationsList(c *gin.Context) {
 		return
 	}
 
-	db, err := database.ConnectToPostgresDataBase()
+	data, err := database.GetCalculationsList()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	data, err := db.GetCalculationsList()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	db.Close()
 	c.JSON(http.StatusOK, data)
+}
+
+// GetScales
+// @Tags Parameters
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.GetScales
+// @Router /api/GetScales [get]
+func GetScales(c *gin.Context) {
+	var data []models.GetScales
+	permissions := []string{conf.GlobalConfig.Permissions.Show}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	data, err := database.GetScales()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, data)
+}
+
+// UpdateScale
+// @Tags Parameters
+// @Accept json
+// @Produce json
+// @Param data body models.UpdateScale true "Данные шкалы"
+// @Success 200
+// @Router /api/UpdateScale [post]
+func UpdateScale(c *gin.Context) {
+	var data models.UpdateScale
+	permissions := []string{conf.GlobalConfig.Permissions.Edit}
+
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := database.UpdateScale(data); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, "Update successful")
 }
 
 func isValidDate(c *gin.Context, dateString string) (bool, time.Time) {

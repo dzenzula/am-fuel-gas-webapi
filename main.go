@@ -14,6 +14,7 @@ import (
 
 	c "main/configuration"
 	"main/controller"
+	"main/database"
 	"main/docs"
 )
 
@@ -59,6 +60,7 @@ func startGin() {
 	docs.SwaggerInfo.Description = "This is a sample server AmFuelGaz server."
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
+	database.ConnectToPostgresDataBase()
 	r := gin.New()
 
 	store := cookie.NewStore([]byte("secret"))
@@ -97,6 +99,9 @@ func startGin() {
 		apiGroup.POST("/CalculateImbalance", controller.CalculateImbalance)
 		apiGroup.POST("/RemoveImbalanceCalculation", controller.RemoveImbalanceCalculation)
 		apiGroup.GET("/GetNodesList", controller.GetNodesList)
+
+		apiGroup.GET("/GetScales", controller.GetScales)
+		apiGroup.POST("/UpdateScale", controller.UpdateScale)
 	}
 
 	r.Run(c.GlobalConfig.ServerAddress)
