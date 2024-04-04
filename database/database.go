@@ -181,8 +181,8 @@ func RecalculateDensityCoefficient(date string, username string) error {
 		}
 	}
 
-	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density_or_imbalance(?, ?, ?)`
-	ans := dbConnection.db.Exec(queryRecalculate, date, username, DensityCoefId)
+	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density(?, ?)`
+	ans := dbConnection.db.Exec(queryRecalculate, date, username)
 	if ans.Error != nil {
 		return ans.Error
 	}
