@@ -26,9 +26,10 @@ type ConStringPG struct {
 }
 
 type Permissions struct {
-	Edit      string `yaml:"edit"`
-	Show      string `yaml:"show"`
-	Calculate string `yaml:"calculate"`
+	Edit       string `yaml:"edit"`
+	Show       string `yaml:"show"`
+	Calculate  string `yaml:"calculate"`
+	EditScales string `yaml:"edit_scales"`
 }
 
 var (

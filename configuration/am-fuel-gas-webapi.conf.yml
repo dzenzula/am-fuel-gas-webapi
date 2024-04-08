@@ -10,6 +10,7 @@ permissions:
   edit: "edit_parameters"
   show: "show_parameters"
   calculate: "calculate_parameters"
+  edit_scales: "edit_scales"
 
 server_address: "127.0.0.1:5010"
 gin_mode: release

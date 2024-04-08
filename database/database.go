@@ -157,13 +157,19 @@ func GetDensityCoefficientData(date string) (models.GetDensityCoefficient, error
 		return res, cfans.Error
 	}
 
-	/*queryGetLastCoefficient := `SELECT value FROM "raw-data".data
-	WHERE id_measuring = 1703751302145
-	AND "timestamp" >= ? AND "timestamp" < ?::timestamptz + INTERVAL '1 DAY'
-	ORDER BY id DESC
-	LIMIT 1`*/
-	queryGetLastCoefficient := `SELECT * FROM "raw-data".get_day_last_value_by_id_measuring_date(?, ?, ?);`
+	/*queryGetLastCoefficient := `SELECT * FROM "raw-data".get_day_last_value_by_id_measuring_date(?, ?, ?);`
 	cflans := dbConnection.db.Raw(queryGetLastCoefficient, 1703751302145, date, 14).Scan(&res.DensityCoefficient)
+	if cflans.Error != nil {
+		return res, cflans.Error
+	}*/
+
+	queryGetLastCoefficient := `SELECT value, timestamp_insert
+    							FROM "raw-data".data
+								WHERE timestamp between ?::timestamptz - INTERVAL '14 DAY' and ?
+								AND id_measuring = 1703751302145
+    							ORDER BY timestamp DESC, id DESC
+    							LIMIT 1`
+	cflans := dbConnection.db.Raw(queryGetLastCoefficient, date, date).Scan(&res)
 	if cflans.Error != nil {
 		return res, cflans.Error
 	}
@@ -349,7 +355,11 @@ func GetScales() ([]models.GetScales, error) {
 	}
 
 	var res []models.GetScales
-	queryGetScales := `SELECT id_measuring, value, description FROM "raw-data".measuring_scales`
+	queryGetScales := `SELECT id_measuring, value, description FROM "raw-data".measuring_scales
+					   WHERE id_measuring IN (
+							SELECT "raw-data".get_id_measuring_by_tags('AmFuelGas', 'NatGas')
+					   )
+					   ORDER BY description ASC`
 	if db := dbConnection.db.Raw(queryGetScales).Scan(&res); db.Error != nil {
 		return nil, db.Error
 	}

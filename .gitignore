@@ -5,3 +5,4 @@ am-fuel-gas-webapi
 deploy/*
 /*.yml
 *.sdb*
+logs

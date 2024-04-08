@@ -396,7 +396,7 @@ func GetScales(c *gin.Context) {
 // @Router /api/UpdateScale [post]
 func UpdateScale(c *gin.Context) {
 	var data models.UpdateScale
-	permissions := []string{conf.GlobalConfig.Permissions.Edit}
+	permissions := []string{conf.GlobalConfig.Permissions.EditScales}
 
 	if !checkPermissions(c, permissions) {
 		return
