@@ -1,3 +1,4 @@
 [submodule "src/authorization"]
 	path = src/authorization
 	url = https://krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization.git
+	
