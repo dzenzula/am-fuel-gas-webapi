@@ -13,7 +13,7 @@ permissions:
   edit_scales: "edit_scales"
 
 server_address: "127.0.0.1:5010"
-gin_mode: release
+gin_mode: debug
 
 ## Настройки для апи авторизации
 mssql:
@@ -24,3 +24,4 @@ mssql:
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
 service_id: 17
+log_level: "debug"

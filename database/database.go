@@ -2,6 +2,7 @@ package database
 
 import (
 	c "main/configuration"
+	"main/logger"
 	"main/models"
 	"strconv"
 	"time"
@@ -57,11 +58,13 @@ func ConnectToPostgresDataBase() error {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
+		logger.Error(err.Error())
 		return err
 	}
 
 	dbConnection.db = db
 
+	logger.Info(fmt.Sprintf("Connected to %s/%s", c.GlobalConfig.ConStringPgDb.Host, c.GlobalConfig.ConStringPgDb.DBName))
 	return nil
 }
 
@@ -77,11 +80,13 @@ func InsertParametrs(d models.SetManualFuelGas) error {
 	var guid string
 	parsedDate, errTime := time.Parse(layout, d.Date)
 	if errTime != nil {
+		logger.Error(errTime.Error())
 		return errTime
 	}
 
 	guid, errGuid := generateGUID()
 	if errGuid != nil {
+		logger.Error(errGuid.Error())
 		return errGuid
 	}
 
@@ -95,6 +100,7 @@ func InsertParametrs(d models.SetManualFuelGas) error {
 	timestamp := parsedDate.Format("2006-01-02 15:04:05.999")
 	res := dbConnection.db.Exec(queryInsert, strconv.Itoa(d.Id), timestamp, fmt.Sprintf("%f", d.Value), guid, strconv.Itoa(192))
 	if res.Error != nil {
+		logger.Error(res.Error.Error())
 		return res.Error
 	}
 	return nil
@@ -114,6 +120,7 @@ func GetData(date time.Time, tag string) ([]models.GetManualFuelGas, error) {
 	queryGetData := `SELECT * FROM "analytics-time-group".get_last_manual_data(?, ?)`
 	ans := dbConnection.db.Raw(queryGetData, dateStart, tag).Scan(&gas)
 	if ans.Error != nil {
+		logger.Error(ans.Error.Error())
 		return nil, ans.Error
 	}
 
@@ -134,6 +141,7 @@ func GetDataHistory(date time.Time, id string) ([]models.UpdateHistory, error) {
 	queryGetHistory := `SELECT * FROM "analytics-time-group".get_manual_data_history(?,?)`
 	ans := dbConnection.db.Raw(queryGetHistory, dateStart, id).Scan(&history)
 	if ans.Error != nil {
+		logger.Error(ans.Error.Error())
 		return nil, ans.Error
 	}
 
@@ -154,6 +162,7 @@ func GetDensityCoefficientData(date string) (models.GetDensityCoefficient, error
 	queryGetDensityCoefficient := `SELECT * FROM "analytics-time-group".get_density_coefficient(?)`
 	cfans := dbConnection.db.Raw(queryGetDensityCoefficient, date).Scan(&history)
 	if cfans.Error != nil {
+		logger.Error(cfans.Error.Error())
 		return res, cfans.Error
 	}
 
@@ -171,6 +180,7 @@ func GetDensityCoefficientData(date string) (models.GetDensityCoefficient, error
     							LIMIT 1`
 	cflans := dbConnection.db.Raw(queryGetLastCoefficient, date, date).Scan(&res)
 	if cflans.Error != nil {
+		logger.Error(cflans.Error.Error())
 		return res, cflans.Error
 	}
 
@@ -190,6 +200,7 @@ func RecalculateDensityCoefficient(date string, username string) error {
 	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_density(?, ?)`
 	ans := dbConnection.db.Exec(queryRecalculate, date, username)
 	if ans.Error != nil {
+		logger.Error(ans.Error.Error())
 		return ans.Error
 	}
 	return nil
@@ -208,6 +219,7 @@ func GetImbalanceHistory(date string) ([]models.ImbalanceCalculationHistory, err
 	queryGetImbalanceHistory := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_history(?)`
 	ans := dbConnection.db.Raw(queryGetImbalanceHistory, date).Scan(&res)
 	if ans.Error != nil {
+		logger.Error(ans.Error.Error())
 		return nil, ans.Error
 	}
 
@@ -229,12 +241,14 @@ func GetCalculatedImbalanceDetails(batch string) (models.GetCalculatedImbalanceD
 	queryGetImbalanceData := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_data(?)`
 	dans := dbConnection.db.Raw(queryGetImbalanceData, batch).Scan(&data)
 	if dans.Error != nil {
+		logger.Error(dans.Error.Error())
 		return res, dans.Error
 	}
 
 	queryGetImbalanceNodes := `SELECT * FROM "analytics-time-group".get_imbalance_calculation_data_nodes(?)`
 	nans := dbConnection.db.Raw(queryGetImbalanceNodes, batch).Scan(&nodes)
 	if nans.Error != nil {
+		logger.Error(nans.Error.Error())
 		return res, nans.Error
 	}
 
@@ -257,12 +271,14 @@ func PrepareImbalanceCalculation(date string, username string) (string, error) {
 	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?)`
 	cans := dbConnection.db.Exec(queryCancel, username)
 	if cans.Error != nil {
+		logger.Error(cans.Error.Error())
 		return "", cans.Error
 	}
 
 	queryCreateCalc := `CALL "analytics-time-group".ins_day_natural_gas_empty_imbalance(?, ?);`
 	ans := dbConnection.db.Raw(queryCreateCalc, date, username).Scan(&res)
 	if ans.Error != nil {
+		logger.Error(ans.Error.Error())
 		return "", ans.Error
 	}
 
@@ -280,6 +296,7 @@ func CalculateImbalance(date string, username string, setData string, batch stri
 	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_imbalance_main(?, ?, ?, ?)`
 	ans := dbConnection.db.Exec(queryRecalculate, date, username, setData, batch)
 	if ans.Error != nil {
+		logger.Error(ans.Error.Error())
 		return ans.Error
 	}
 
@@ -297,6 +314,7 @@ func RemoveImbalanceCalculation(username string, batch string) error {
 	queryCancel := `CALL "analytics-time-group".del_natural_gas_imbalance_empty_calculation(?, ?)`
 	cans := dbConnection.db.Exec(queryCancel, username, batch)
 	if cans.Error != nil {
+		logger.Error(cans.Error.Error())
 		return cans.Error
 	}
 
@@ -322,6 +340,7 @@ func GetNodesList(batch string) ([]models.NodeList, error) {
 		ans = dbConnection.db.Raw(queryGetNodes).Scan(&res)
 	}
 	if ans.Error != nil {
+		logger.Error(ans.Error.Error())
 		return nil, ans.Error
 	}
 
@@ -339,8 +358,9 @@ func GetCalculationsList() ([]models.CalculationList, error) {
 	var res []models.CalculationList
 	arr := []int{DensityCoefId, ImbalanceId}
 	queryGetCalculationsList := `SELECT id, name, description FROM "raw-data".measurings WHERE id IN (?)`
-	if err := dbConnection.db.Raw(queryGetCalculationsList, arr).Scan(&res); err.Error != nil {
-		return nil, err.Error
+	if ans := dbConnection.db.Raw(queryGetCalculationsList, arr).Scan(&res); ans.Error != nil {
+		logger.Error(ans.Error.Error())
+		return nil, ans.Error
 	}
 
 	return res, nil
@@ -360,8 +380,9 @@ func GetScales() ([]models.GetScales, error) {
 							SELECT "raw-data".get_id_measuring_by_tags('AmFuelGas', 'NatGas')
 					   )
 					   ORDER BY description ASC`
-	if db := dbConnection.db.Raw(queryGetScales).Scan(&res); db.Error != nil {
-		return nil, db.Error
+	if ans := dbConnection.db.Raw(queryGetScales).Scan(&res); ans.Error != nil {
+		logger.Error(ans.Error.Error())
+		return nil, ans.Error
 	}
 
 	return res, nil
@@ -376,8 +397,9 @@ func UpdateScale(scale models.UpdateScale) error {
 	}
 
 	queryUpdateScale := `UPDATE "raw-data".measuring_scales SET value=? WHERE id_measuring=?`
-	if err := dbConnection.db.Exec(queryUpdateScale, scale.Value, scale.Id); err.Error != nil {
-		return err.Error
+	if ans := dbConnection.db.Exec(queryUpdateScale, scale.Value, scale.Id); ans.Error != nil {
+		logger.Error(ans.Error.Error())
+		return ans.Error
 	}
 
 	return nil
@@ -392,6 +414,7 @@ func generateGUID() (string, error) {
 	// Generate a new random UUID
 	newUUID, err := uuid.NewRandom()
 	if err != nil {
+		logger.Error(err.Error())
 		return "", err
 	}
 

@@ -3,10 +3,16 @@ package configuration
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
 	"gopkg.in/yaml.v2"
+)
+
+const (
+	debug   string = "debug"
+	release string = "release"
 )
 
 type Config struct {
@@ -14,6 +20,7 @@ type Config struct {
 	Permissions   Permissions `yaml:"permissions"`
 	ServerAddress string      `yaml:"server_address"`
 	GinMode       string      `yaml:"gin_mode"`
+	LogLevel      string      `yaml:"log_level"`
 }
 
 type ConStringPG struct {
@@ -64,4 +71,15 @@ func initConfig() Config {
 	}
 
 	return config
+}
+
+func GetLogLevel() slog.Level {
+	switch {
+	case GlobalConfig.LogLevel == debug:
+		return slog.LevelDebug
+	case GlobalConfig.LogLevel == release:
+		return slog.LevelInfo
+	}
+
+	return slog.LevelDebug
 }

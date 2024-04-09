@@ -24,3 +24,4 @@ mssql:
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
 service_id: 17
+log_level: "release"
