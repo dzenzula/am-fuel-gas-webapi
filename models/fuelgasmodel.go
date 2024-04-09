@@ -67,6 +67,7 @@ type ImbalanceCalculation struct {
 	Nitka1Auto      *string    `gorm:"column:nitka1_auto"`
 	Nitka2Auto      *string    `gorm:"column:nitka2_auto"`
 	Nitka3Auto      *string    `gorm:"column:nitka3_auto"`
+	Density         *string    `gorm:"column:density"`
 	ManualTotal     *string    `gorm:"column:manual_total"`
 	AutoTotal       *string    `gorm:"column:auto_total"`
 	AggregateTotal  *string    `gorm:"column:aggregate_total"`

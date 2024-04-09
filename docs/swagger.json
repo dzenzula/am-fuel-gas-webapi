@@ -592,6 +592,9 @@
                         "$ref": "#/definitions/models.DensityCalculationHistory"
                     }
                 },
+                "dateCoefficient": {
+                    "type": "string"
+                },
                 "densityCoefficient": {
                     "type": "number"
                 }
@@ -647,6 +650,9 @@
                     "type": "string"
                 },
                 "calculationDate": {
+                    "type": "string"
+                },
+                "density": {
                     "type": "string"
                 },
                 "grp10Manual": {
