@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization"
+	logger "krr-app-gitlab01.europe.mittalco.com/pait/modules/go/logging"
 )
 
 // GetParam
@@ -22,6 +23,7 @@ import (
 // @Success 200 {object} models.GetManualFuelGas
 // @Router /api/GetParameters [get]
 func GetParameters(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/GetParameters --> Called")
 	date := c.Query("date")
 	tag := c.Query("tag")
 
@@ -42,6 +44,7 @@ func GetParameters(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gas)
+	logger.Debug("/am-fuel-gas-webapi/api/GetParameters --> Finished with success")
 }
 
 // GetParamHistory
@@ -53,6 +56,7 @@ func GetParameters(c *gin.Context) {
 // @Success 200 {object} models.UpdateHistory
 // @Router /api/GetParameterHistory [get]
 func GetParameterHistory(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/GetParameterHistory --> Called")
 	idMeasuring := c.Query("id")
 	date := c.Query("date")
 
@@ -73,6 +77,7 @@ func GetParameterHistory(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, history)
+	logger.Debug("/am-fuel-gas-webapi/api/GetParameterHistory --> Finished with success")
 }
 
 // SetParam
@@ -83,6 +88,7 @@ func GetParameterHistory(c *gin.Context) {
 // @Success 200
 // @Router /api/SetParameters [post]
 func SetParameters(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/SetParameters --> Called")
 	var data models.SetManualFuelGas
 	permissions := []string{conf.GlobalConfig.Permissions.Edit}
 
@@ -107,6 +113,7 @@ func SetParameters(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "Insert successful")
+	logger.Debug("/am-fuel-gas-webapi/api/SetParameters --> Finished with success")
 }
 
 // GetDensityCoefficientParam
@@ -117,6 +124,7 @@ func SetParameters(c *gin.Context) {
 // @Success 200 {object} models.GetDensityCoefficient
 // @Router /api/GetDensityCoefficientDetails [get]
 func GetDensityCoefficientDetails(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/GetDensityCoefficientDetails --> Called")
 	var data models.GetDensityCoefficient
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
@@ -137,6 +145,7 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
+	logger.Debug("/am-fuel-gas-webapi/api/GetDensityCoefficientDetails --> Finished with success")
 }
 
 // RecalculateDensityCoefficient
@@ -147,6 +156,7 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 // @Success 200
 // @Router /api/RecalculateDensityCoefficient [post]
 func RecalculateDensityCoefficient(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/RecalculateDensityCoefficient --> Called")
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
@@ -167,6 +177,7 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "Calculation succsessful")
+	logger.Debug("/am-fuel-gas-webapi/api/RecalculateDensityCoefficient --> Finished with success")
 }
 
 // GetImbalanceHistory
@@ -177,6 +188,7 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 // @Success 200 {object} []models.ImbalanceCalculationHistory
 // @Router /api/GetImbalanceHistory [get]
 func GetImbalanceHistory(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/GetImbalanceHistory --> Called")
 	var data []models.ImbalanceCalculationHistory
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
@@ -197,6 +209,7 @@ func GetImbalanceHistory(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
+	logger.Debug("/am-fuel-gas-webapi/api/GetImbalanceHistory --> Finished with success")
 }
 
 // GetCalculatedImbalanceDetails
@@ -207,6 +220,7 @@ func GetImbalanceHistory(c *gin.Context) {
 // @Success 200 {object} models.GetCalculatedImbalanceDetails
 // @Router /api/GetCalculatedImbalanceDetails [get]
 func GetCalculatedImbalanceDetails(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/GetCalculatedImbalanceDetails --> Called")
 	var data models.GetCalculatedImbalanceDetails
 	batch := c.Query("batch")
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
@@ -222,6 +236,7 @@ func GetCalculatedImbalanceDetails(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
+	logger.Debug("/am-fuel-gas-webapi/api/GetCalculatedImbalanceDetails --> Finished with success")
 }
 
 // PrepareImbalanceCalculation
@@ -232,6 +247,7 @@ func GetCalculatedImbalanceDetails(c *gin.Context) {
 // @Success 200 {object} string
 // @Router /api/PrepareImbalanceCalculation [post]
 func PrepareImbalanceCalculation(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/PrepareImbalanceCalculation --> Called")
 	date := c.Query("date")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
@@ -252,6 +268,7 @@ func PrepareImbalanceCalculation(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, batch)
+	logger.Debug("/am-fuel-gas-webapi/api/PrepareImbalanceCalculation --> Finished with success")
 }
 
 // CalculateImbalance
@@ -264,6 +281,7 @@ func PrepareImbalanceCalculation(c *gin.Context) {
 // @Success 200
 // @Router /api/CalculateImbalance [post]
 func CalculateImbalance(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/CalculateImbalance --> Called")
 	date := c.Query("date")
 	batch := c.Query("batch")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
@@ -291,6 +309,7 @@ func CalculateImbalance(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "Calculation succsessful")
+	logger.Debug("/am-fuel-gas-webapi/api/CalculateImbalance --> Finished with success")
 }
 
 // RemoveImbalanceCalculation
@@ -301,6 +320,7 @@ func CalculateImbalance(c *gin.Context) {
 // @Success 200
 // @Router /api/RemoveImbalanceCalculation [post]
 func RemoveImbalanceCalculation(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/RemoveImbalanceCalculation --> Called")
 	batch := c.Query("batch")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
@@ -316,6 +336,7 @@ func RemoveImbalanceCalculation(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "Success")
+	logger.Debug("/am-fuel-gas-webapi/api/RemoveImbalanceCalculation --> Finished with success")
 }
 
 // GetNodesList
@@ -326,6 +347,7 @@ func RemoveImbalanceCalculation(c *gin.Context) {
 // @Success 200 {object} models.NodeList
 // @Router /api/GetNodesList [get]
 func GetNodesList(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/GetNodesList --> Called")
 	batch := c.Query("cloneId")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
@@ -340,6 +362,7 @@ func GetNodesList(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
+	logger.Debug("/am-fuel-gas-webapi/api/GetNodesList --> Finished with success")
 }
 
 // GetCalculationsList
@@ -349,6 +372,7 @@ func GetNodesList(c *gin.Context) {
 // @Success 200 {object} models.CalculationList
 // @Router /api/GetCalculationsList [get]
 func GetCalculationsList(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/GetCalculationsList --> Called")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
 	if !checkPermissions(c, permissions) {
@@ -362,6 +386,7 @@ func GetCalculationsList(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
+	logger.Debug("/am-fuel-gas-webapi/api/GetCalculationsList --> Finished with success")
 }
 
 // GetScales
@@ -371,6 +396,7 @@ func GetCalculationsList(c *gin.Context) {
 // @Success 200 {object} models.GetScales
 // @Router /api/GetScales [get]
 func GetScales(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/GetScales --> Called")
 	var data []models.GetScales
 	permissions := []string{conf.GlobalConfig.Permissions.Show}
 
@@ -385,6 +411,7 @@ func GetScales(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
+	logger.Debug("/am-fuel-gas-webapi/api/GetScales --> Finished with success")
 }
 
 // UpdateScale
@@ -395,6 +422,7 @@ func GetScales(c *gin.Context) {
 // @Success 200
 // @Router /api/UpdateScale [post]
 func UpdateScale(c *gin.Context) {
+	logger.Debug("/am-fuel-gas-webapi/api/UpdateScale --> Called")
 	var data models.UpdateScale
 	permissions := []string{conf.GlobalConfig.Permissions.EditScales}
 
@@ -413,12 +441,14 @@ func UpdateScale(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "Update successful")
+	logger.Debug("/am-fuel-gas-webapi/api/UpdateScale --> Finished with success")
 }
 
 func isValidDate(c *gin.Context, dateString string) (bool, time.Time) {
 	layout := "2006-01-02"
 	parsedTime, err := time.Parse(layout, dateString)
 	if err != nil {
+		logger.Error(err.Error())
 		c.JSON(http.StatusBadRequest, "Дата не корректна.")
 		return false, time.Time{}
 	}
@@ -436,7 +466,8 @@ func checkPermissions(c *gin.Context, permissions []string) bool {
 	authorization.Init(c)
 	checkPermissions := authorization.CheckAnyPermission(permissions)
 	if checkPermissions != authorization.Ok {
-		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error code: %s", string(checkPermissions)))
+		logger.Error(fmt.Sprintf("Error: %s", string(checkPermissions)))
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("Error: %s", string(checkPermissions)))
 		return false
 	}
 	return true

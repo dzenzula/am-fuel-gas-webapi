@@ -58,6 +58,8 @@ definitions:
         items:
           $ref: '#/definitions/models.DensityCalculationHistory'
         type: array
+      dateCoefficient:
+        type: string
       densityCoefficient:
         type: number
     type: object
@@ -94,6 +96,8 @@ definitions:
       autoTotal:
         type: string
       calculationDate:
+        type: string
+      density:
         type: string
       grp10Manual:
         type: string

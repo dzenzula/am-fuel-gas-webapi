@@ -14,6 +14,7 @@ require (
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.25.7-0.20240204074919-46816ad31dde
 	krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization v0.0.0
+	krr-app-gitlab01.europe.mittalco.com/pait/modules/go/logging v0.0.0
 )
 
 require (
@@ -66,4 +67,7 @@ require (
 	gorm.io/driver/sqlserver v1.5.2 // indirect
 )
 
-replace krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization => ./src/authorization
+replace (
+	krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization => ./src/authorization
+	krr-app-gitlab01.europe.mittalco.com/pait/modules/go/logging => ./src/logging
+)

@@ -14,6 +14,7 @@ type Config struct {
 	Permissions   Permissions `yaml:"permissions"`
 	ServerAddress string      `yaml:"server_address"`
 	GinMode       string      `yaml:"gin_mode"`
+	LogLevel      string      `yaml:"log_level"`
 }
 
 type ConStringPG struct {
