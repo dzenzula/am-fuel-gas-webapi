@@ -5,13 +5,13 @@ import (
 	"io"
 	conf "main/configuration"
 	"main/database"
-	"main/logger"
 	"main/models"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization"
+	logger "krr-app-gitlab01.europe.mittalco.com/pait/modules/go/logging"
 )
 
 // GetParam

@@ -11,6 +11,7 @@ import (
 	files "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization"
+	logger "krr-app-gitlab01.europe.mittalco.com/pait/modules/go/logging"
 
 	c "main/configuration"
 	"main/controller"
@@ -34,6 +35,7 @@ func (p *program) run() {
 }
 
 func main() {
+	logger.LogInit(c.GlobalConfig.LogLevel)
 	svcConfig := &service.Config{
 		Name:        "FuelGasWebApiService",
 		DisplayName: "Fuel Gas Web Api Service",
@@ -43,12 +45,12 @@ func main() {
 	prg := &program{}
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		fmt.Println("Error creating service:", err)
+		logger.Error(fmt.Sprintf("Error creating service: %s", err))
 		return
 	}
 
 	if err = s.Run(); err != nil {
-		fmt.Println("Error starting service:", err)
+		logger.Error(fmt.Sprintf("Error starting service: %s", err))
 		return
 	}
 }

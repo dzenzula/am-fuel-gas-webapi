@@ -2,7 +2,6 @@ package database
 
 import (
 	c "main/configuration"
-	"main/logger"
 	"main/models"
 	"strconv"
 	"time"
@@ -12,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	logger "krr-app-gitlab01.europe.mittalco.com/pait/modules/go/logging"
 )
 
 type DBConnection struct {
