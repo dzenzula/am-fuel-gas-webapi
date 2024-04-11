@@ -76,21 +76,23 @@ type ImbalanceCalculation struct {
 }
 
 type Node struct {
-	Id                int64  `gorm:"column:id"`
-	Description       string `gorm:"column:description"`
-	BatchId           string `gorm:"column:batch"`
-	Value             string `gorm:"column:node_value"`
-	Flag              string `gorm:"column:imbalance_flag"`
-	Distributed       string `gorm:"column:distributed"`
-	GasRedistribution string `gorm:"column:gas_redistribution"`
-	Consumption       string `gorm:"column:consumption"`
-	Adjustment        string `gorm:"column:adjustment"`
+	Id                 int64  `gorm:"column:id"`
+	Description        *string `gorm:"column:description"`
+	BatchId            *string `gorm:"column:batch"`
+	Value              *string `gorm:"column:node_value"`
+	FlagBalance        *string `gorm:"column:balance_flag"`
+	FlagRedistribution *string `gorm:"column:redistribution_flag"`
+	Distributed        *string `gorm:"column:distributed"`
+	GasRedistribution  *string `gorm:"column:gas_redistribution"`
+	Consumption        *string `gorm:"column:consumption"`
+	Adjustment         *string `gorm:"column:adjustment"`
 }
 
 type SetImbalanceFlag struct {
-	Id         int
-	Flag       string
-	Adjustment string
+	Id                 int
+	FlagBalance        string
+	FlagRedistribution string
+	Adjustment         string
 }
 
 type SetAdjustment struct {
