@@ -113,6 +113,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "Флаг раздельности расчета",
+                        "name": "separate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "description": "Данные расчета небаланс",
                         "name": "data",
                         "in": "body",
@@ -656,6 +663,12 @@ const docTemplate = `{
                 "aggregateTotal": {
                     "type": "string"
                 },
+                "aggregateTotal12": {
+                    "type": "string"
+                },
+                "aggregateTotal3": {
+                    "type": "string"
+                },
                 "autoTotal": {
                     "type": "string"
                 },
@@ -669,6 +682,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "internalImbalance": {
+                    "type": "string"
+                },
+                "internalImbalance12": {
+                    "type": "string"
+                },
+                "internalImbalance3": {
                     "type": "string"
                 },
                 "manualTotal": {
@@ -692,7 +714,19 @@ const docTemplate = `{
                 "nitka3Manual": {
                     "type": "string"
                 },
+                "percentageImbalance": {
+                    "type": "string"
+                },
+                "percentageImbalance12": {
+                    "type": "string"
+                },
+                "percentageImbalance3": {
+                    "type": "string"
+                },
                 "pgRedisTotal": {
+                    "type": "string"
+                },
+                "separately": {
                     "type": "string"
                 },
                 "userName": {
@@ -755,7 +789,10 @@ const docTemplate = `{
                 "distributed": {
                     "type": "string"
                 },
-                "flag": {
+                "flagBalance": {
+                    "type": "string"
+                },
+                "flagRedistribution": {
                     "type": "string"
                 },
                 "gasRedistribution": {
@@ -789,7 +826,10 @@ const docTemplate = `{
                 "adjustment": {
                     "type": "string"
                 },
-                "flag": {
+                "flagBalance": {
+                    "type": "string"
+                },
+                "flagRedistribution": {
                     "type": "string"
                 },
                 "id": {
