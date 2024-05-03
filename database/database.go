@@ -293,7 +293,7 @@ func CalculateImbalance(date string, username string, setData string, batch stri
 		}
 	}
 
-	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_imbalance_main_test(?, ?, ?, ?, ?)`
+	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_imbalance_main(?, ?, ?, ?, ?)`
 	ans := dbConnection.db.Exec(queryRecalculate, date, username, setData, batch, sep)
 	if ans.Error != nil {
 		logger.Error(ans.Error.Error())
