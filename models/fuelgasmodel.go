@@ -58,39 +58,50 @@ type GetCalculatedImbalanceDetails struct {
 }
 
 type ImbalanceCalculation struct {
-	Id              string     `gorm:"column:calc_batch"`
-	CalculationDate *time.Time `gorm:"column:calculation_date"`
-	Nitka1Manual    *string    `gorm:"column:nitka1_manual"`
-	Nitka2Manual    *string    `gorm:"column:nitka2_manual"`
-	Nitka3Manual    *string    `gorm:"column:nitka3_manual"`
-	Grp10Manual     *string    `gorm:"column:grp10_manual"`
-	Nitka1Auto      *string    `gorm:"column:nitka1_auto"`
-	Nitka2Auto      *string    `gorm:"column:nitka2_auto"`
-	Nitka3Auto      *string    `gorm:"column:nitka3_auto"`
-	Density         *string    `gorm:"column:density"`
-	ManualTotal     *string    `gorm:"column:manual_total"`
-	AutoTotal       *string    `gorm:"column:auto_total"`
-	AggregateTotal  *string    `gorm:"column:aggregate_total"`
-	PgRedisTotal    *string    `gorm:"column:pg_redis_total"`
-	UserName        *string    `gorm:"column:username"`
+	Id                    string     `gorm:"column:calc_batch"`
+	CalculationDate       *time.Time `gorm:"column:calculation_date"`
+	Nitka1Manual          *string    `gorm:"column:nitka1_manual"`
+	Nitka2Manual          *string    `gorm:"column:nitka2_manual"`
+	Nitka3Manual          *string    `gorm:"column:nitka3_manual"`
+	Grp10Manual           *string    `gorm:"column:grp10_manual"`
+	Nitka1Auto            *string    `gorm:"column:nitka1_auto"`
+	Nitka2Auto            *string    `gorm:"column:nitka2_auto"`
+	Nitka3Auto            *string    `gorm:"column:nitka3_auto"`
+	Density               *string    `gorm:"column:density"`
+	ManualTotal           *string    `gorm:"column:manual_total"`
+	AutoTotal             *string    `gorm:"column:auto_total"`
+	AggregateTotal        *string    `gorm:"column:aggregate_total"`
+	AggregateTotal12      *string    `gorm:"column:aggregate_total12"`
+	AggregateTotal3       *string    `gorm:"column:aggregate_total3"`
+	PgRedisTotal          *string    `gorm:"column:pg_redis_total"`
+	InternalImbalance     *string    `gorm:"column:internal_imblance"`
+	InternalImbalance12   *string    `gorm:"column:internal_imblance12"`
+	InternalImbalance3    *string    `gorm:"column:internal_imblance3"`
+	PercentageImbalance   *string    `gorm:"column:percentage_imbalance"`
+	PercentageImbalance12 *string    `gorm:"column:percentage_imbalance12"`
+	PercentageImbalance3  *string    `gorm:"column:percentage_imbalance3"`
+	Separately            *string    `gorm:"column:separately"`
+	UserName              *string    `gorm:"column:username"`
 }
 
 type Node struct {
-	Id                int64  `gorm:"column:id"`
-	Description       string `gorm:"column:description"`
-	BatchId           string `gorm:"column:batch"`
-	Value             string `gorm:"column:node_value"`
-	Flag              string `gorm:"column:imbalance_flag"`
-	Distributed       string `gorm:"column:distributed"`
-	GasRedistribution string `gorm:"column:gas_redistribution"`
-	Consumption       string `gorm:"column:consumption"`
-	Adjustment        string `gorm:"column:adjustment"`
+	Id                 int64   `gorm:"column:id"`
+	Description        *string `gorm:"column:description"`
+	BatchId            *string `gorm:"column:batch"`
+	Value              *string `gorm:"column:node_value"`
+	FlagBalance        *string `gorm:"column:balance_flag"`
+	FlagRedistribution *string `gorm:"column:redistribution_flag"`
+	Distributed        *string `gorm:"column:distributed"`
+	GasRedistribution  *string `gorm:"column:gas_redistribution"`
+	Consumption        *string `gorm:"column:consumption"`
+	Adjustment         *string `gorm:"column:adjustment"`
 }
 
 type SetImbalanceFlag struct {
-	Id         int
-	Flag       string
-	Adjustment string
+	Id                 int
+	FlagBalance        string
+	FlagRedistribution string
+	Adjustment         string
 }
 
 type SetAdjustment struct {

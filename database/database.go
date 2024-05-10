@@ -285,7 +285,7 @@ func PrepareImbalanceCalculation(date string, username string) (string, error) {
 	return res, nil
 }
 
-func CalculateImbalance(date string, username string, setData string, batch string) error {
+func CalculateImbalance(date string, username string, setData string, batch string, sep string) error {
 	sqldb, _ := dbConnection.db.DB()
 	if err := sqldb.Ping(); err != nil {
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
@@ -293,8 +293,8 @@ func CalculateImbalance(date string, username string, setData string, batch stri
 		}
 	}
 
-	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_imbalance_main(?, ?, ?, ?)`
-	ans := dbConnection.db.Exec(queryRecalculate, date, username, setData, batch)
+	queryRecalculate := `CALL "analytics-time-group".ins_calculate_day_natural_gas_imbalance_main(?, ?, ?, ?, ?)`
+	ans := dbConnection.db.Exec(queryRecalculate, date, username, batch, sep, setData)
 	if ans.Error != nil {
 		logger.Error(ans.Error.Error())
 		return ans.Error

@@ -103,6 +103,13 @@
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "Флаг раздельности расчета",
+                        "name": "separate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "description": "Данные расчета небаланс",
                         "name": "data",
                         "in": "body",
@@ -646,6 +653,12 @@
                 "aggregateTotal": {
                     "type": "string"
                 },
+                "aggregateTotal12": {
+                    "type": "string"
+                },
+                "aggregateTotal3": {
+                    "type": "string"
+                },
                 "autoTotal": {
                     "type": "string"
                 },
@@ -659,6 +672,15 @@
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "internalImbalance": {
+                    "type": "string"
+                },
+                "internalImbalance12": {
+                    "type": "string"
+                },
+                "internalImbalance3": {
                     "type": "string"
                 },
                 "manualTotal": {
@@ -682,7 +704,19 @@
                 "nitka3Manual": {
                     "type": "string"
                 },
+                "percentageImbalance": {
+                    "type": "string"
+                },
+                "percentageImbalance12": {
+                    "type": "string"
+                },
+                "percentageImbalance3": {
+                    "type": "string"
+                },
                 "pgRedisTotal": {
+                    "type": "string"
+                },
+                "separately": {
                     "type": "string"
                 },
                 "userName": {
@@ -745,7 +779,10 @@
                 "distributed": {
                     "type": "string"
                 },
-                "flag": {
+                "flagBalance": {
+                    "type": "string"
+                },
+                "flagRedistribution": {
                     "type": "string"
                 },
                 "gasRedistribution": {
@@ -779,7 +816,10 @@
                 "adjustment": {
                     "type": "string"
                 },
-                "flag": {
+                "flagBalance": {
+                    "type": "string"
+                },
+                "flagRedistribution": {
                     "type": "string"
                 },
                 "id": {

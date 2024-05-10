@@ -277,6 +277,7 @@ func PrepareImbalanceCalculation(c *gin.Context) {
 // @Produce json
 // @Param date query string true "Дата получения параметров"
 // @Param batch query string true "Id batch расчета"
+// @Param separate query string true "Флаг раздельности расчета"
 // @Param data body []models.SetImbalanceFlag true "Данные расчета небаланс"
 // @Success 200
 // @Router /api/CalculateImbalance [post]
@@ -284,6 +285,7 @@ func CalculateImbalance(c *gin.Context) {
 	logger.Debug("/am-fuel-gas-webapi/api/CalculateImbalance --> Called")
 	date := c.Query("date")
 	batch := c.Query("batch")
+	sep := c.Query("separate")
 	permissions := []string{conf.GlobalConfig.Permissions.Calculate}
 
 	isValid, _ := isValidDate(c, date)
@@ -302,7 +304,7 @@ func CalculateImbalance(c *gin.Context) {
 	}
 
 	username := authorization.ReturnDomainUser()
-	err = database.CalculateImbalance(date, username, string(jsonData), batch)
+	err = database.CalculateImbalance(date, username, string(jsonData), batch, sep)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
