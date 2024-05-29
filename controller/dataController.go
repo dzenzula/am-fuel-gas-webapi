@@ -101,12 +101,6 @@ func SetParameters(c *gin.Context) {
 		return
 	}
 
-	isValid := isValidValue(data.Value)
-	if !isValid {
-		c.JSON(http.StatusBadRequest, "Введите корректное значение")
-		return
-	}
-
 	if err := database.InsertParametrs(data); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -457,11 +451,6 @@ func isValidDate(c *gin.Context, dateString string) (bool, time.Time) {
 
 	// Возвращаем дату с временем 00:00:00
 	return true, parsedTime.Truncate(24 * time.Hour)
-}
-
-func isValidValue(value float64) bool {
-	res := value >= 0.0001
-	return res
 }
 
 func checkPermissions(c *gin.Context, permissions []string) bool {

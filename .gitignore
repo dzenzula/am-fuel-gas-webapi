@@ -6,3 +6,4 @@ deploy/*
 /*.yml
 *.sdb*
 logs
+*.log
