@@ -95,7 +95,7 @@ type Node struct {
 	GasRedistribution  *string `gorm:"column:gas_redistribution"`
 	Consumption        *string `gorm:"column:consumption"`
 	Adjustment         *string `gorm:"column:adjustment"`
-	ParentId           int64   `gorm:"column:parent_id"`
+	ParentId           *int64  `gorm:"column:parent_id"`
 }
 
 type SetImbalanceFlag struct {
