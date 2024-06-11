@@ -70,16 +70,19 @@ type ImbalanceCalculation struct {
 	Density               *string    `gorm:"column:density"`
 	ManualTotal           *string    `gorm:"column:manual_total"`
 	AutoTotal             *string    `gorm:"column:auto_total"`
-	AggregateTotal        *string    `gorm:"column:aggregate_total"`
+	AggregateTotal        *string    `gorm:"column:aggregate_total"` //Сумма поагрегатного потребления
 	AggregateTotal12      *string    `gorm:"column:aggregate_total12"`
 	AggregateTotal3       *string    `gorm:"column:aggregate_total3"`
-	PgRedisTotal          *string    `gorm:"column:pg_redis_total"`
-	InternalImbalance     *string    `gorm:"column:internal_imblance"`
+	PgRedisTotal          *string    `gorm:"column:pg_redis_total"`    //Сумма внутреннего небаланса
+	InternalImbalance     *string    `gorm:"column:internal_imblance"` //Внутренний небаланс
 	InternalImbalance12   *string    `gorm:"column:internal_imblance12"`
 	InternalImbalance3    *string    `gorm:"column:internal_imblance3"`
-	PercentageImbalance   *string    `gorm:"column:percentage_imbalance"`
+	PercentageImbalance   *string    `gorm:"column:percentage_imbalance"` //Процент небаланса
 	PercentageImbalance12 *string    `gorm:"column:percentage_imbalance12"`
 	PercentageImbalance3  *string    `gorm:"column:percentage_imbalance3"`
+	SumWithImbalance      *string    `gorm:"column:sum_with_imbalance"` //Сумма потребдения с небалансом
+	SumWithImbalance12    *string    `gorm:"column:sum_with_imbalance12"`
+	SumWithImbalance3     *string    `gorm:"column:sum_with_imbalance3"`
 	Separately            *string    `gorm:"column:separately"`
 	UserName              *string    `gorm:"column:username"`
 }
