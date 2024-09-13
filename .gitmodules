@@ -1,6 +1,7 @@
 [submodule "src/authorization"]
 	path = src/authorization
 	url = https://krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization.git
+	branch = main_v2
 
 [submodule "src/logging"]
 	path = src/logging
