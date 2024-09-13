@@ -661,6 +661,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "aggregateTotal": {
+                    "description": "Сумма поагрегатного потребления",
                     "type": "string"
                 },
                 "aggregateTotal12": {
@@ -685,6 +686,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "internalImbalance": {
+                    "description": "Внутренний небаланс",
                     "type": "string"
                 },
                 "internalImbalance12": {
@@ -715,6 +717,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "percentageImbalance": {
+                    "description": "Процент небаланса",
                     "type": "string"
                 },
                 "percentageImbalance12": {
@@ -724,9 +727,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "pgRedisTotal": {
+                    "description": "Сумма внутреннего небаланса",
                     "type": "string"
                 },
                 "separately": {
+                    "type": "string"
+                },
+                "sumWithImbalance": {
+                    "description": "Сумма потребления с небалансом",
+                    "type": "string"
+                },
+                "sumWithImbalance12": {
+                    "type": "string"
+                },
+                "sumWithImbalance3": {
                     "type": "string"
                 },
                 "userName": {
@@ -799,6 +813,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "parentId": {
                     "type": "integer"
                 },
                 "value": {
