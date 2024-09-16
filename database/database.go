@@ -69,10 +69,18 @@ func ConnectToPostgresDataBase() error {
 }
 
 func InsertParametrs(d models.SetManualFuelGas) error {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return cerr
+			}
 		}
 	}
 
@@ -107,10 +115,18 @@ func InsertParametrs(d models.SetManualFuelGas) error {
 }
 
 func GetData(date time.Time, tag string) ([]models.GetManualFuelGas, error) {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return nil, cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return nil, cerr
+			}
 		}
 	}
 
@@ -128,10 +144,18 @@ func GetData(date time.Time, tag string) ([]models.GetManualFuelGas, error) {
 }
 
 func GetDataHistory(date time.Time, id string) ([]models.UpdateHistory, error) {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return nil, cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return nil, cerr
+			}
 		}
 	}
 
@@ -150,10 +174,18 @@ func GetDataHistory(date time.Time, id string) ([]models.UpdateHistory, error) {
 
 func GetDensityCoefficientData(date string) (models.GetDensityCoefficient, error) {
 	var res models.GetDensityCoefficient
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return res, cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return res, cerr
+			}
 		}
 	}
 
@@ -190,10 +222,18 @@ func GetDensityCoefficientData(date string) (models.GetDensityCoefficient, error
 }
 
 func RecalculateDensityCoefficient(date string, username string) error {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return cerr
+			}
 		}
 	}
 
@@ -207,10 +247,18 @@ func RecalculateDensityCoefficient(date string, username string) error {
 }
 
 func GetImbalanceHistory(date string) ([]models.ImbalanceCalculationHistory, error) {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return nil, cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return nil, cerr
+			}
 		}
 	}
 
@@ -228,10 +276,18 @@ func GetImbalanceHistory(date string) ([]models.ImbalanceCalculationHistory, err
 
 func GetCalculatedImbalanceDetails(batch string) (models.GetCalculatedImbalanceDetails, error) {
 	var res models.GetCalculatedImbalanceDetails
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return res, cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return res, cerr
+			}
 		}
 	}
 
@@ -259,10 +315,18 @@ func GetCalculatedImbalanceDetails(batch string) (models.GetCalculatedImbalanceD
 }
 
 func PrepareImbalanceCalculation(date string, username string) (string, error) {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return "", cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return "", cerr
+			}
 		}
 	}
 
@@ -286,10 +350,18 @@ func PrepareImbalanceCalculation(date string, username string) (string, error) {
 }
 
 func CalculateImbalance(date string, username string, setData string, batch string, sep string) error {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return cerr
+			}
 		}
 	}
 
@@ -304,10 +376,18 @@ func CalculateImbalance(date string, username string, setData string, batch stri
 }
 
 func RemoveImbalanceCalculation(username string, batch string) error {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return cerr
+			}
 		}
 	}
 
@@ -322,10 +402,18 @@ func RemoveImbalanceCalculation(username string, batch string) error {
 }
 
 func GetNodesList(batch string) ([]models.NodeList, error) {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return nil, cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return nil, cerr
+			}
 		}
 	}
 
@@ -348,10 +436,18 @@ func GetNodesList(batch string) ([]models.NodeList, error) {
 }
 
 func GetCalculationsList() ([]models.CalculationList, error) {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return nil, cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return nil, cerr
+			}
 		}
 	}
 
@@ -367,10 +463,18 @@ func GetCalculationsList() ([]models.CalculationList, error) {
 }
 
 func GetScales() ([]models.GetScales, error) {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return nil, cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return nil, cerr
+			}
 		}
 	}
 
@@ -389,10 +493,18 @@ func GetScales() ([]models.GetScales, error) {
 }
 
 func UpdateScale(scale models.UpdateScale) error {
-	sqldb, _ := dbConnection.db.DB()
-	if err := sqldb.Ping(); err != nil {
+	if dbConnection.db == nil {
+		logger.Error("Connection to DB lost, reconnecting...")
 		if cerr := ConnectToPostgresDataBase(); cerr != nil {
 			return cerr
+		}
+	} else {
+		sqldb, _ := dbConnection.db.DB()
+		if err := sqldb.Ping(); err != nil {
+			logger.Error("Connection to DB lost, reconnecting...")
+			if cerr := ConnectToPostgresDataBase(); cerr != nil {
+				return cerr
+			}
 		}
 	}
 
