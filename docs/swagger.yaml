@@ -92,6 +92,7 @@ definitions:
   models.ImbalanceCalculation:
     properties:
       aggregateTotal:
+        description: Сумма поагрегатного потребления
         type: string
       aggregateTotal3:
         type: string
@@ -108,6 +109,7 @@ definitions:
       id:
         type: string
       internalImbalance:
+        description: Внутренний небаланс
         type: string
       internalImbalance3:
         type: string
@@ -128,14 +130,23 @@ definitions:
       nitka3Manual:
         type: string
       percentageImbalance:
+        description: Процент небаланса
         type: string
       percentageImbalance3:
         type: string
       percentageImbalance12:
         type: string
       pgRedisTotal:
+        description: Сумма внутреннего небаланса
         type: string
       separately:
+        type: string
+      sumWithImbalance:
+        description: Сумма потребления с небалансом
+        type: string
+      sumWithImbalance3:
+        type: string
+      sumWithImbalance12:
         type: string
       userName:
         type: string
@@ -183,6 +194,8 @@ definitions:
       gasRedistribution:
         type: string
       id:
+        type: integer
+      parentId:
         type: integer
       value:
         type: string

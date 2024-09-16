@@ -1,10 +1,10 @@
 pg:
-  host: KRR-SQL-PSGRE00
+  host: "KRR-SQL-PSGRE00"
   port: 5432
   user: "%PG_LOGIN%"
   password: "%PG_PASSWORD%"
-  dbname: krr-pa-analytics-data
-  sslmode: disable
+  dbname: "krr-pa-analytics-data"
+  sslmode: "disable"
 
 permissions:
   edit: "edit_parameters"
@@ -16,11 +16,13 @@ server_address: "127.0.0.1:5010"
 gin_mode: debug
 
 ## Настройки для апи авторизации
-mssql:
-  server: "KRR-TST-PAHWL02"
-  user: "EUROPE\\%MSSQL_LOGIN%"
-  password: "%MSSQL_PASSWORD%"
-  database: "KRR-PA-ACS"
+pg_auth:
+  host: "KRR-SQL-PSGRE00"
+  port: 5432
+  user: "%PG_LOGIN%"
+  password: "%PG_PASSWORD%"
+  dbname: "krr-pa-analytics-data"
+  sslmode: "disable"
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
 service_id: 17

@@ -80,7 +80,7 @@ type ImbalanceCalculation struct {
 	PercentageImbalance   *string    `gorm:"column:percentage_imbalance"` //Процент небаланса
 	PercentageImbalance12 *string    `gorm:"column:percentage_imbalance12"`
 	PercentageImbalance3  *string    `gorm:"column:percentage_imbalance3"`
-	SumWithImbalance      *string    `gorm:"column:sum_with_imbalance"` //Сумма потребдения с небалансом
+	SumWithImbalance      *string    `gorm:"column:sum_with_imbalance"` //Сумма потребления с небалансом
 	SumWithImbalance12    *string    `gorm:"column:sum_with_imbalance12"`
 	SumWithImbalance3     *string    `gorm:"column:sum_with_imbalance3"`
 	Separately            *string    `gorm:"column:separately"`

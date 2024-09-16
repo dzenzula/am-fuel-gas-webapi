@@ -37,11 +37,17 @@ func GetParameters(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("GetData DB called")
+
 	gas, err := database.GetData(truncatedTime, tag)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("GetData DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, gas)
 	logger.Debug("/am-fuel-gas-webapi/api/GetParameters --> Finished with success")
@@ -70,11 +76,17 @@ func GetParameterHistory(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("GetDataHistory DB called")
+
 	history, err := database.GetDataHistory(truncatedTime, idMeasuring)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("GetDataHistory DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, history)
 	logger.Debug("/am-fuel-gas-webapi/api/GetParameterHistory --> Finished with success")
@@ -101,10 +113,16 @@ func SetParameters(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("InsertParametrs DB called")
+
 	if err := database.InsertParametrs(data); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("InsertParametrs DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, "Insert successful")
 	logger.Debug("/am-fuel-gas-webapi/api/SetParameters --> Finished with success")
@@ -132,11 +150,17 @@ func GetDensityCoefficientDetails(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("GetDensityCoefficientData DB called")
+
 	data, err := database.GetDensityCoefficientData(date)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("GetDensityCoefficientData DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, data)
 	logger.Debug("/am-fuel-gas-webapi/api/GetDensityCoefficientDetails --> Finished with success")
@@ -163,12 +187,18 @@ func RecalculateDensityCoefficient(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("RecalculateDensityCoefficient DB called")
+
 	username := authorization.ReturnDomainUser()
 	err := database.RecalculateDensityCoefficient(date, username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("RecalculateDensityCoefficient DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, "Calculation succsessful")
 	logger.Debug("/am-fuel-gas-webapi/api/RecalculateDensityCoefficient --> Finished with success")
@@ -196,11 +226,17 @@ func GetImbalanceHistory(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("GetImbalanceHistory DB called")
+
 	data, err := database.GetImbalanceHistory(date)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("GetImbalanceHistory DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, data)
 	logger.Debug("/am-fuel-gas-webapi/api/GetImbalanceHistory --> Finished with success")
@@ -223,11 +259,17 @@ func GetCalculatedImbalanceDetails(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("GetCalculatedImbalanceDetails DB called")
+
 	data, err := database.GetCalculatedImbalanceDetails(batch)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("GetCalculatedImbalanceDetails DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, data)
 	logger.Debug("/am-fuel-gas-webapi/api/GetCalculatedImbalanceDetails --> Finished with success")
@@ -254,12 +296,18 @@ func PrepareImbalanceCalculation(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("PrepareImbalanceCalculation DB called")
+
 	username := authorization.ReturnDomainUser()
 	batch, err := database.PrepareImbalanceCalculation(date, username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("PrepareImbalanceCalculation DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, batch)
 	logger.Debug("/am-fuel-gas-webapi/api/PrepareImbalanceCalculation --> Finished with success")
@@ -297,12 +345,18 @@ func CalculateImbalance(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("CalculateImbalance DB called")
+
 	username := authorization.ReturnDomainUser()
 	err = database.CalculateImbalance(date, username, string(jsonData), batch, sep)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("CalculateImbalance DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, "Calculation succsessful")
 	logger.Debug("/am-fuel-gas-webapi/api/CalculateImbalance --> Finished with success")
@@ -324,12 +378,18 @@ func RemoveImbalanceCalculation(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("RemoveImbalanceCalculation DB called")
+
 	username := authorization.ReturnDomainUser()
 	err := database.RemoveImbalanceCalculation(username, batch)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("RemoveImbalanceCalculation DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, "Success")
 	logger.Debug("/am-fuel-gas-webapi/api/RemoveImbalanceCalculation --> Finished with success")
@@ -351,11 +411,17 @@ func GetNodesList(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("GetNodesList DB called")
+
 	data, err := database.GetNodesList(batch)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("GetNodesList DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, data)
 	logger.Debug("/am-fuel-gas-webapi/api/GetNodesList --> Finished with success")
@@ -375,11 +441,17 @@ func GetCalculationsList(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("GetCalculationsList DB called")
+
 	data, err := database.GetCalculationsList()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("GetCalculationsList DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, data)
 	logger.Debug("/am-fuel-gas-webapi/api/GetCalculationsList --> Finished with success")
@@ -400,11 +472,17 @@ func GetScales(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("GetScales DB called")
+
 	data, err := database.GetScales()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("GetScales DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, data)
 	logger.Debug("/am-fuel-gas-webapi/api/GetScales --> Finished with success")
@@ -431,10 +509,16 @@ func UpdateScale(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+	logger.Debug("UpdateScale DB called")
+
 	if err := database.UpdateScale(data); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	duration := time.Since(startTime)
+	logger.Debug(fmt.Sprintf("UpdateScale DB call duration: %v", duration.Seconds()))
 
 	c.JSON(http.StatusOK, "Update successful")
 	logger.Debug("/am-fuel-gas-webapi/api/UpdateScale --> Finished with success")
