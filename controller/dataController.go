@@ -320,7 +320,7 @@ func PrepareImbalanceCalculation(c *gin.Context) {
 // @Param date query string true "Дата получения параметров"
 // @Param batch query string true "Id batch расчета"
 // @Param separate query string true "Флаг раздельности расчета"
-// @Param data body []models.SetImbalanceFlag true "Данные расчета небаланс"
+// @Param data body []models.PostImbalanceCalculation true "Данные расчета небаланс"
 // @Success 200
 // @Router /api/CalculateImbalance [post]
 func CalculateImbalance(c *gin.Context) {

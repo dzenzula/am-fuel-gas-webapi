@@ -101,10 +101,26 @@ type Node struct {
 	ParentId           *int64  `gorm:"column:parent_id"`
 }
 
+type PostImbalanceCalculation struct {
+	ImbalanceCalculation SetImbalanceData
+	Nodes                []SetImbalanceFlag
+}
+
+type SetImbalanceData struct {
+	Nitka1Manual *string
+	Nitka2Manual *string
+	Nitka3Manual *string
+	Grp10Manual  *string
+	Nitka1Auto   *string
+	Nitka2Auto   *string
+	Nitka3Auto   *string
+}
+
 type SetImbalanceFlag struct {
 	Id                 int
 	FlagBalance        string
 	FlagRedistribution string
+	Value              string
 	Adjustment         string
 }
 

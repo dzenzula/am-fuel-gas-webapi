@@ -127,7 +127,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.SetImbalanceFlag"
+                                "$ref": "#/definitions/models.PostImbalanceCalculation"
                             }
                         }
                     }
@@ -837,6 +837,46 @@ const docTemplate = `{
                 }
             }
         },
+        "models.PostImbalanceCalculation": {
+            "type": "object",
+            "properties": {
+                "imbalanceCalculation": {
+                    "$ref": "#/definitions/models.SetImbalanceData"
+                },
+                "nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SetImbalanceFlag"
+                    }
+                }
+            }
+        },
+        "models.SetImbalanceData": {
+            "type": "object",
+            "properties": {
+                "grp10Manual": {
+                    "type": "string"
+                },
+                "nitka1Auto": {
+                    "type": "string"
+                },
+                "nitka1Manual": {
+                    "type": "string"
+                },
+                "nitka2Auto": {
+                    "type": "string"
+                },
+                "nitka2Manual": {
+                    "type": "string"
+                },
+                "nitka3Auto": {
+                    "type": "string"
+                },
+                "nitka3Manual": {
+                    "type": "string"
+                }
+            }
+        },
         "models.SetImbalanceFlag": {
             "type": "object",
             "properties": {
@@ -851,6 +891,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "value": {
+                    "type": "string"
                 }
             }
         },
