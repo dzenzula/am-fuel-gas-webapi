@@ -1,5 +1,5 @@
 pg:
-  host: "KRR-SQL-PGNODE11"
+  host: "KRR-SQL-PGNODE01"
   port: 5432
   user: "%PG_LOGIN%"
   password: "%PG_PASSWORD%"

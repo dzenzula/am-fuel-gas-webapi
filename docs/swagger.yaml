@@ -209,6 +209,32 @@ definitions:
       id:
         type: integer
     type: object
+  models.PostImbalanceCalculation:
+    properties:
+      imbalanceCalculation:
+        $ref: '#/definitions/models.SetImbalanceData'
+      nodes:
+        items:
+          $ref: '#/definitions/models.SetImbalanceFlag'
+        type: array
+    type: object
+  models.SetImbalanceData:
+    properties:
+      grp10Manual:
+        type: string
+      nitka1Auto:
+        type: string
+      nitka1Manual:
+        type: string
+      nitka2Auto:
+        type: string
+      nitka2Manual:
+        type: string
+      nitka3Auto:
+        type: string
+      nitka3Manual:
+        type: string
+    type: object
   models.SetImbalanceFlag:
     properties:
       adjustment:
@@ -219,6 +245,8 @@ definitions:
         type: string
       id:
         type: integer
+      value:
+        type: string
     type: object
   models.SetManualFuelGas:
     properties:
@@ -327,7 +355,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.SetImbalanceFlag'
+            $ref: '#/definitions/models.PostImbalanceCalculation'
           type: array
       produces:
       - application/json
